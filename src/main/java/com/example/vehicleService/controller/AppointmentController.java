@@ -1,0 +1,107 @@
+package com.example.vehicleService.controller;
+
+import com.example.vehicleService.dto.AppointmentDTO;
+import com.example.vehicleService.dto.ResponseMessage;
+import com.example.vehicleService.entity.*;
+import com.example.vehicleService.entity.enums.Event;
+import com.example.vehicleService.entity.enums.NotificationStatus;
+import com.example.vehicleService.entity.enums.Status;
+import com.example.vehicleService.repository.NotificationRepository;
+import com.example.vehicleService.repository.UserRepository;
+import com.example.vehicleService.service.AppointmentService;
+import com.example.vehicleService.service.NotificationService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/appointments")
+public class AppointmentController {
+    private final AppointmentService appointmentService;
+    private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final UserRepository userRepository;
+
+    public AppointmentController(AppointmentService appointmentService, NotificationRepository notificationRepository, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository) {
+        this.appointmentService = appointmentService;
+        this.notificationRepository = notificationRepository;
+        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.userRepository = userRepository;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id){
+        return ResponseEntity.ok(appointmentService.getById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAll(Pageable pageable){
+        return ResponseEntity.ok(appointmentService.getAllPagination(pageable));
+    }
+
+    @PostMapping
+    @Transactional
+    public ResponseEntity<?> add(@RequestBody AppointmentDTO appointmentDTO) {
+        Appointment appointment = appointmentService.save(appointmentDTO);
+        Notification notification = new Notification();
+
+        Customer customer = appointment.getCustomer();
+        Shop shop = appointment.getVehicleCares().stream().findFirst().orElseThrow().getShop();
+
+        String message = customer.getName() + " đã đặt lịch hẹn sửa chữa " + appointment.getVehicleType() + " ở " + shop.getName();
+        notification.setNotificationStatus(NotificationStatus.UNREAD);
+        notification.setEventType(Event.APPOINTMENT);
+        notification.setEventId(appointment.getId());
+        notification.setMessage(message);
+
+        // Lấy đối tượng User từ DB để tránh trạng thái Detached
+        User shopUser = userRepository.findById(shop.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("Shop user not found"));
+        User customerUser = userRepository.findById(customer.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("Customer user not found"));
+
+        notification.setUsers(Set.of(shopUser, customerUser));
+
+        notificationRepository.save(notification);
+        notificationRepository.flush();
+
+        simpMessagingTemplate.convertAndSendToUser(customerUser.getUsername(), "queue/notifications", "NOTIFICATION: " + message);
+        simpMessagingTemplate.convertAndSendToUser(shopUser.getUsername(), "queue/notifications", "NOTIFICATION: " + message);
+
+        return ResponseEntity.ok(appointment);
+    }
+
+
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody AppointmentDTO appointmentDTO){
+        return ResponseEntity.ok(appointmentService.save(appointmentDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        appointmentService.delete(id);
+        return ResponseEntity.ok(new ResponseMessage("Delete Appointment successfully!", LocalDateTime.now()));
+    }
+
+    @GetMapping("/customer")
+    public ResponseEntity<?> getByCurrentCustomer(){
+       return ResponseEntity.ok( appointmentService.getByCurrentCustomer());
+    }
+
+    @GetMapping("/shop")
+    public ResponseEntity<?> getByCurrentShop(){
+        return ResponseEntity.ok( appointmentService.getByCurrentShop());
+    }
+
+    @PutMapping("update-status/{id}")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam("status")Status status){
+        appointmentService.updateStatus(status, id);
+        return ResponseEntity.ok(new ResponseMessage("Cập nhật trạng thái thành công!", LocalDateTime.now()));
+    }
+}
