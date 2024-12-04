@@ -123,7 +123,17 @@ public class VnpayServiceImpl implements VnpayService {
             if (emergencyRequest == null){
                 appointment.setStatus(Status.PAID);
             }
-            payment.setPaymentStatus(responseCode.equals("00") ? Status.ACCEPTED : Status.DECLINED);
+            payment.setPaymentStatus(Status.ACCEPTED);
+            payment.setOrderInfo(orderInfo);
+            response.sendRedirect("http://localhost:4200/payment-success/" + payment.getId());
+        }
+        else{
+            Appointment appointment = payment.getAppointment();
+            EmergencyRequest emergencyRequest = payment.getEmergencyRequest();
+            if (emergencyRequest == null){
+                appointment.setStatus(Status.CANCELED);
+            }
+            payment.setPaymentStatus(Status.DECLINED);
             payment.setOrderInfo(orderInfo);
             response.sendRedirect("http://localhost:4200/payment-success/" + payment.getId());
         }

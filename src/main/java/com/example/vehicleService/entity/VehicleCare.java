@@ -2,10 +2,8 @@ package com.example.vehicleService.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +31,10 @@ public class VehicleCare {
 
     @Column(name = "available")
     private boolean available;
+
+    @Column(name ="image_url")
+    @Size(max = 4000)
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "shop_id", nullable = false)
@@ -104,5 +106,13 @@ public class VehicleCare {
 
     public void setAppointments(Set<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

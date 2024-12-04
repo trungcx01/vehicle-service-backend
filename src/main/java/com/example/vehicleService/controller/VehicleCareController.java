@@ -5,8 +5,10 @@ import com.example.vehicleService.dto.VehicleCareDTO;
 import com.example.vehicleService.entity.VehicleCare;
 import com.example.vehicleService.service.VehicleCareService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -29,14 +31,14 @@ public class VehicleCareController {
         return ResponseEntity.ok(vehicleCareService.getAllPagination(pageable));
     }
 
-    @PostMapping
-    public ResponseEntity<?> add(@RequestBody VehicleCareDTO vehicleCareDTO){
-        return ResponseEntity.ok(vehicleCareService.save(vehicleCareDTO));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> add(@RequestPart VehicleCareDTO vehicleCareDTO, @RequestParam("image")MultipartFile image){
+        return ResponseEntity.ok(vehicleCareService.save(vehicleCareDTO, image));
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody VehicleCareDTO vehicleCareDTO){
-        return ResponseEntity.ok(vehicleCareService.save(vehicleCareDTO));
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(@RequestPart VehicleCareDTO vehicleCareDTO, @RequestParam(value = "image", required = false)MultipartFile image){
+        return ResponseEntity.ok(vehicleCareService.save(vehicleCareDTO, image));
     }
 
     @DeleteMapping("{id}")
