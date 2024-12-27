@@ -7,6 +7,8 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Generated;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -16,38 +18,48 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "user")
-public class User{
+@NoArgsConstructor
+@AllArgsConstructor
+public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "username", nullable = false, unique = true)
-    @NotNull
-    @Size(min = 1, max = 20)
+    @NotBlank(message = "Username is mandatory")
+    @Size(min = 1, max = 20, message = "Username must be between 1 and 20 characters")
     private String username;
 
     @Column(name = "password", nullable = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @NotBlank(message = "Password is mandatory")
+    @Size(min = 8, max = 255, message = "Password must be between 8 and 255 characters")
     private String password;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
+    @NotBlank(message = "Email is mandatory")
+    @Email(message = "Email should be valid")
     private String email;
 
     @Column(name = "image_url")
+    @Size(max = 1000, message = "Image URL should not exceed 1000 characters")
     private String imageUrl;
 
     @Column(name = "activated", nullable = false)
     private boolean activated = false;
 
-    @Column(name = "activation_key", length = 20)
+    @Column(name = "activation_key", length = 20, unique = true)  // Đảm bảo activationKey là duy nhất
+    @Size(max = 20, message = "Activation key should be up to 20 characters")
     private String activationKey;
 
-    @Column(name = "reset_key", length = 20)
+    @Column(name = "reset_key", length = 20, unique = true)  // Đảm bảo resetKey là duy nhất
+    @Size(max = 20, message = "Reset key should be up to 20 characters")
     private String resetKey;
 
     @Column(name = "reset_date")
     private LocalDateTime resetDate = null;
+
+    @Column(name = "is_locked", nullable = false)
+    private boolean isLocked = false;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -60,23 +72,6 @@ public class User{
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "users")
     @JsonIgnore
     private Set<Notification> notifications = new HashSet<>();
-
-    public User() {
-    }
-
-    public User(Long id, String username, String password, String email, String imageUrl, boolean activated, String activationKey, String resetKey, LocalDateTime resetDate, Set<Role> roles, Set<Notification> notifications) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.imageUrl = imageUrl;
-        this.activated = activated;
-        this.activationKey = activationKey;
-        this.resetKey = resetKey;
-        this.resetDate = resetDate;
-        this.roles = roles;
-        this.notifications = notifications;
-    }
 
     public Long getId() {
         return id;
@@ -148,6 +143,14 @@ public class User{
 
     public void setResetDate(LocalDateTime resetDate) {
         this.resetDate = resetDate;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
     }
 
     public Set<Role> getRoles() {

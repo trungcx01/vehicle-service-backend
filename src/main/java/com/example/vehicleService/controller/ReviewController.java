@@ -6,6 +6,7 @@ import com.example.vehicleService.service.ReviewService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -29,13 +30,13 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody ReviewDTO reviewDTO){
-        return ResponseEntity.ok(reviewService.save(reviewDTO));
+    public ResponseEntity<?> add(@RequestPart ReviewDTO reviewDTO, @RequestParam(value = "image", required = false)MultipartFile image){
+        return ResponseEntity.ok(reviewService.save(reviewDTO, image));
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody ReviewDTO reviewDTO){
-        return ResponseEntity.ok(reviewService.save(reviewDTO));
+    public ResponseEntity<?> update(@RequestPart ReviewDTO reviewDTO, @RequestParam(value = "image", required = false)MultipartFile image){
+        return ResponseEntity.ok(reviewService.save(reviewDTO, image));
     }
 
     @DeleteMapping("{id}")
@@ -47,5 +48,20 @@ public class ReviewController {
     @GetMapping("/top8-newest")
     public ResponseEntity<?> top8Newest(){
         return ResponseEntity.ok(reviewService.findTop8ByOrderByCreatedAtDesc());
+    }
+
+    @GetMapping("/get-by-appointment/{id}")
+    public ResponseEntity<?> getByAppointment(@PathVariable("id") Long id){
+        return ResponseEntity.ok(reviewService.findByAppointmentId(id));
+    }
+
+    @GetMapping("/get-by-proposal/{id}")
+    public ResponseEntity<?> getByProposal(@PathVariable("id") Long id){
+        return ResponseEntity.ok(reviewService.findByProposalId(id));
+    }
+
+    @GetMapping("/get-by-shop/{id}")
+    public ResponseEntity<?> getByShop(@PathVariable("id") Long id){
+        return ResponseEntity.ok(reviewService.findByShop(id));
     }
 }

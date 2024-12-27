@@ -2,6 +2,8 @@ package com.example.vehicleService.service.impl;
 
 import com.example.vehicleService.dto.EmergencyRequestDTO;
 import com.example.vehicleService.entity.EmergencyRequest;
+import com.example.vehicleService.entity.Shop;
+import com.example.vehicleService.entity.enums.Status;
 import com.example.vehicleService.mapper.EmergencyRequestMapper;
 import com.example.vehicleService.repository.CustomerRepository;
 import com.example.vehicleService.repository.EmergencyRequestRepository;
@@ -12,9 +14,11 @@ import com.example.vehicleService.service.EmergencyRequestService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -24,13 +28,15 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
     private final EmergencyRequestMapper emergencyRequestMapper;
     private final ProposalRepository proposalRepository;
     private final CustomerRepository customerRepository;
+    private final ShopRepository shopRepository;
     private final CloudinaryService cloudinaryService;
 
-    public EmergencyRequestServiceImpl(EmergencyRequestRepository emergencyRequestRepository, EmergencyRequestMapper emergencyRequestMapper, ProposalRepository proposalRepository, CustomerRepository customerRepository, CloudinaryService cloudinaryService) {
+    public EmergencyRequestServiceImpl(EmergencyRequestRepository emergencyRequestRepository, EmergencyRequestMapper emergencyRequestMapper, ProposalRepository proposalRepository, CustomerRepository customerRepository, ShopRepository shopRepository, CloudinaryService cloudinaryService) {
         this.emergencyRequestRepository = emergencyRequestRepository;
         this.emergencyRequestMapper = emergencyRequestMapper;
         this.proposalRepository = proposalRepository;
         this.customerRepository = customerRepository;
+        this.shopRepository = shopRepository;
         this.cloudinaryService = cloudinaryService;
     }
 
@@ -73,5 +79,32 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
                 () -> new EntityNotFoundException("Not found Emergency Request!")
         );
         emergencyRequestRepository.delete(emergencyRequest);
+    }
+
+    @Override
+    public void updateStatus(Status status, Long id) {
+        EmergencyRequest emergencyRequest = emergencyRequestRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Not found Emergency request!")
+        );
+        emergencyRequest.setRequestStatus(status);
+        emergencyRequestRepository.save(emergencyRequest);
+    }
+
+    @Override
+    public long countByDate(LocalDate date) {
+        return emergencyRequestRepository.countByDate(date);
+    }
+
+    @Override
+    public long countByDateAndCurrentShop(LocalDate date) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Shop shop = shopRepository.findByUserUsername(username);
+        return emergencyRequestRepository.countByDateAndCurrentShop(date, shop.getId());
+    }
+
+    @Override
+    public List<EmergencyRequest> getByCustomer() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return emergencyRequestRepository.findByCustomerUserUsername(username);
     }
 }

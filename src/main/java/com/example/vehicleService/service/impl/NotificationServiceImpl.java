@@ -7,7 +7,6 @@ import com.example.vehicleService.repository.NotificationRepository;
 import com.example.vehicleService.repository.UserRepository;
 import com.example.vehicleService.service.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -66,14 +64,14 @@ public class NotificationServiceImpl implements NotificationService {
         );
     }
 
-    @Override
-    public List<Notification> getUnreadNotificationOfCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new EntityNotFoundException("Not found user!")
-        );
-        return notificationRepository.findByUsersAndNotificationStatus(Set.of(user), NotificationStatus.UNREAD);
-    }
+//    @Override
+//    public List<Notification> getUnreadNotificationOfCurrentUser() {
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        User user = userRepository.findByUsername(username).orElseThrow(
+//                () -> new EntityNotFoundException("Not found user!")
+//        );
+//        return notificationRepository.findByUsersAndNotificationStatus(Set.of(user), NotificationStatus.UNREAD);
+//    }
 
     @Override
     public List<Notification> getByCurrentUser() {
@@ -86,11 +84,11 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void readAllNotificationsOfCurrentUser() {
-        List<Notification> notificationList = getByCurrentUser();
-        for (Notification n : notificationList){
-            n.setNotificationStatus(NotificationStatus.READ);
-        }
-        notificationRepository.saveAll(notificationList);
+//        List<Notification> notificationList = getByCurrentUser();
+//        for (Notification n : notificationList){
+//            n.setNotificationStatus(NotificationStatus.READ);
+//        }
+//        notificationRepository.saveAll(notificationList);
     }
 
     @Override
@@ -98,7 +96,7 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = notificationRepository.findById(notificationId).orElseThrow(
                 () -> new EntityNotFoundException("Not found Notification!")
         );
-        notification.setNotificationStatus(NotificationStatus.READ);
+//        notification.setNotificationStatus(NotificationStatus.READ);
         notificationRepository.save(notification);
     }
 

@@ -9,13 +9,11 @@ import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {ShopMapper.class, CustomerMapper.class})
+@Mapper(componentModel = "spring", uses = {CustomerMapper.class})
 public interface ReviewMapper extends EntityMapper<ReviewDTO, Review>{
     @Mapping(source = "customerId", target = "customer")
-    @Mapping(source = "shopId", target = "shop")
-    Review toEntity(ReviewDTO dto, @Context ShopRepository shopRepository, @Context CustomerRepository customerRepository);
+    Review toEntity(ReviewDTO dto, @Context CustomerRepository customerRepository);
 
     @Mapping(source = "customer.id", target = "customerId")
-    @Mapping(source = "shop.id", target = "shopId")
     ReviewDTO toDto(Review entity);
 }

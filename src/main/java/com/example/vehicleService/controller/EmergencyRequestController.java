@@ -3,12 +3,9 @@ package com.example.vehicleService.controller;
 import com.example.vehicleService.dto.EmergencyRequestDTO;
 import com.example.vehicleService.dto.ResponseMessage;
 import com.example.vehicleService.entity.EmergencyRequest;
+import com.example.vehicleService.entity.enums.Status;
 import com.example.vehicleService.service.EmergencyRequestService;
-import com.example.vehicleService.service.NotificationService;
-import com.example.vehicleService.service.RedisPubSubService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,20 +13,18 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/emergency-requests")
 public class EmergencyRequestController {
     private final EmergencyRequestService emergencyRequestService;
-    private final RedisPubSubService redisPubSubService;
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public EmergencyRequestController(EmergencyRequestService emergencyRequestService, RedisPubSubService redisPubSubService, ObjectMapper objectMapper, SimpMessagingTemplate simpMessagingTemplate) {
+    public EmergencyRequestController(EmergencyRequestService emergencyRequestService, ObjectMapper objectMapper, SimpMessagingTemplate simpMessagingTemplate) {
         this.emergencyRequestService = emergencyRequestService;
-        this.redisPubSubService = redisPubSubService;
         this.objectMapper = objectMapper;
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
@@ -61,5 +56,28 @@ public class EmergencyRequestController {
     public ResponseEntity<?> delete(@PathVariable Long id){
         emergencyRequestService.deleteById(id);
         return ResponseEntity.ok(new ResponseMessage("Delete Emergency Request successfully!", LocalDateTime.now()));
+    }
+
+    @PutMapping("/update-status/{id}")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam("status") Status status){
+        emergencyRequestService.updateStatus(status, id);
+        return ResponseEntity.ok(new ResponseMessage("Cập nhật thành công", LocalDateTime.now()));
+    }
+
+    @GetMapping("count-by-shop/{date}")
+    public ResponseEntity<?> countByDateAndCurrentShop(@PathVariable String date){
+        LocalDate localDate = LocalDate.parse(date);
+        return ResponseEntity.ok(emergencyRequestService.countByDateAndCurrentShop(localDate));
+    }
+
+    @GetMapping("count/{date}")
+    public ResponseEntity<?> countByDate(@PathVariable String date){
+        LocalDate localDate = LocalDate.parse(date);
+        return ResponseEntity.ok(emergencyRequestService.countByDate(localDate));
+    }
+
+    @GetMapping("/current-customer")
+    public ResponseEntity<?> getByCurrentCustomer(){
+        return ResponseEntity.ok(emergencyRequestService.getByCustomer());
     }
 }

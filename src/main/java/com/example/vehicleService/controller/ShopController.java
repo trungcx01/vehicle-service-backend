@@ -78,7 +78,7 @@ public class ShopController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchByName(@RequestParam("name") String name){
-        return ResponseEntity.ok(shopService.searchByName(name));
+    public ResponseEntity<?> searchByName(@RequestParam("name") String name, @RequestParam("district") String district){
+        return ResponseEntity.ok(shopService.search(name, district));
     }
 }

@@ -3,22 +3,21 @@ package com.example.vehicleService.controller;
 import com.example.vehicleService.dto.AppointmentDTO;
 import com.example.vehicleService.dto.ResponseMessage;
 import com.example.vehicleService.entity.*;
-import com.example.vehicleService.entity.enums.Event;
 import com.example.vehicleService.entity.enums.NotificationStatus;
 import com.example.vehicleService.entity.enums.Status;
+import com.example.vehicleService.entity.enums.Event;
 import com.example.vehicleService.repository.NotificationRepository;
 import com.example.vehicleService.repository.UserRepository;
 import com.example.vehicleService.service.AppointmentService;
-import com.example.vehicleService.service.NotificationService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -55,9 +54,9 @@ public class AppointmentController {
         Shop shop = appointment.getVehicleCares().stream().findFirst().orElseThrow().getShop();
 
         String message = customer.getName() + " đã đặt lịch hẹn sửa chữa " + appointment.getVehicleType() + " ở " + shop.getName();
-        notification.setNotificationStatus(NotificationStatus.UNREAD);
-        notification.setEventType(Event.APPOINTMENT);
-        notification.setEventId(appointment.getId());
+//        notification.setNotificationStatus(NotificationStatus.UNREAD);
+//        notification.setEventType(Event.APPOINTMENT);
+//        notification.setEventId(appointment.getId());
         notification.setMessage(message);
 
         // Lấy đối tượng User từ DB để tránh trạng thái Detached
@@ -100,8 +99,20 @@ public class AppointmentController {
     }
 
     @PutMapping("update-status/{id}")
-    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam("status")Status status){
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam("status") Status status){
         appointmentService.updateStatus(status, id);
         return ResponseEntity.ok(new ResponseMessage("Cập nhật trạng thái thành công!", LocalDateTime.now()));
+    }
+
+    @GetMapping("count/{date}")
+    public ResponseEntity<?> countByDate(@PathVariable String date){
+        LocalDate localDate = LocalDate.parse(date);
+        return ResponseEntity.ok(appointmentService.countByDate(localDate));
+    }
+
+    @GetMapping("count-by-shop/{date}")
+    public ResponseEntity<?> countByCurrentShopAndDate(@PathVariable String date){
+        LocalDate localDate = LocalDate.parse(date);
+        return ResponseEntity.ok(appointmentService.countByDateAndCurrentShop(localDate));
     }
 }

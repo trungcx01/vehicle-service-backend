@@ -4,25 +4,19 @@ import com.example.vehicleService.entity.enums.Status;
 import com.example.vehicleService.entity.enums.VehicleType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "appointment")
+@DiscriminatorValue("APPOINTMENT")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Appointment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Appointment extends BaseService{
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
@@ -33,19 +27,18 @@ public class Appointment {
     @Column(name = "vehicle_type", nullable = false)
     private VehicleType vehicleType;
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private Status status;
+//    @Enumerated(value = EnumType.STRING)
+//    @Column(name = "status", nullable = false)
+//    private Status status;
 
     @Column(name = "note")
     private String note;
 
-
     @ManyToMany
     @JoinTable(
-            name = "appointment_vehicle-care",
+            name = "appointment_vehicle_care",
             joinColumns = {@JoinColumn(name = "appointment_id", referencedColumnName = "id")},  // thực thể chính
-            inverseJoinColumns = {@JoinColumn(name = "vehicle-care_id", referencedColumnName = "id")} // thực thể đối tác
+            inverseJoinColumns = {@JoinColumn(name = "vehicle_care_id", referencedColumnName = "id")} // thực thể đối tác
     )
     private Set<VehicleCare> vehicleCares = new HashSet<>();
 
@@ -53,13 +46,6 @@ public class Appointment {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public LocalDate getDate() {
         return date;
@@ -109,11 +95,4 @@ public class Appointment {
         this.customer = customer;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 }

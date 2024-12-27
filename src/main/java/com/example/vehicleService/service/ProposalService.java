@@ -1,10 +1,8 @@
 package com.example.vehicleService.service;
 
-import com.example.vehicleService.dto.PaymentDTO;
 import com.example.vehicleService.dto.ProposalDTO;
-import com.example.vehicleService.entity.Payment;
 import com.example.vehicleService.entity.Proposal;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.vehicleService.entity.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,4 +16,5 @@ public interface ProposalService {
     List<Proposal> getByEmergencyRequest(Long emergencyRequestId);
     Proposal acceptProposal(Long proposalId);
     Proposal checkSendProposal(Long emergencyRequestId);
+    void updateStatus(Status status, Long id);
 }

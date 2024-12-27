@@ -1,18 +1,11 @@
 package com.example.vehicleService.dto;
 
-import com.example.vehicleService.entity.Appointment;
-import com.example.vehicleService.entity.EmergencyRequest;
 import com.example.vehicleService.entity.enums.PaymentMethod;
 import com.example.vehicleService.entity.enums.Status;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,11 +14,11 @@ public class PaymentDTO {
     private Long id;
     private double amount;
     private PaymentMethod paymentMethod;
-    private Status paymentStatus;
+    private Status status;
     @Null
     private Long appointmentId;
     @Null
-    private Long emergencyRequestId;
+    private Long proposalId;
     private String transactionReference;
 
 //    @Null
@@ -33,8 +26,8 @@ public class PaymentDTO {
 
     @AssertTrue(message = "Payment chỉ đc liên kết với Appointment hoặc EmergencyRequest")
     public boolean isValidPayment(){
-        return (appointmentId != null && emergencyRequestId == null)
-                || (appointmentId == null && emergencyRequestId != null);
+        return (appointmentId != null && proposalId == null)
+                || (appointmentId == null && proposalId != null);
     }
 
     public Long getId() {
@@ -61,12 +54,12 @@ public class PaymentDTO {
         this.paymentMethod = paymentMethod;
     }
 
-    public Status getPaymentStatus() {
-        return paymentStatus;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setPaymentStatus(Status paymentStatus) {
-        this.paymentStatus = paymentStatus;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public Long getAppointmentId() {
@@ -77,12 +70,12 @@ public class PaymentDTO {
         this.appointmentId = appointmentId;
     }
 
-    public Long getEmergencyRequestId() {
-        return emergencyRequestId;
+    public Long getProposalId() {
+        return proposalId;
     }
 
-    public void setEmergencyRequestId(Long emergencyRequestId) {
-        this.emergencyRequestId = emergencyRequestId;
+    public void setProposalId(Long proposalId) {
+        this.proposalId = proposalId;
     }
 
     public String getTransactionReference() {

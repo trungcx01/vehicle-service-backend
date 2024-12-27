@@ -17,6 +17,7 @@ public class ShopDTO {
     private String description;
     private LocalTime openHour;
     private LocalTime closeHour;
+    private String district;
     private Long userId;
 
     public Long getId() {
@@ -29,6 +30,14 @@ public class ShopDTO {
 
     public String getName() {
         return name;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     public void setName(String name) {

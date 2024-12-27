@@ -9,10 +9,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "vehicle-care")
+@Table(name = "vehicle_care")
 @NoArgsConstructor
 @AllArgsConstructor
-public class VehicleCare {
+public class VehicleCare extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,16 +24,19 @@ public class VehicleCare {
     private String description;
 
     @Column(name = "price", nullable = false)
-    private Double price;
+    private Long price;
 
     @Column(name = "estimated_duration ", nullable = false)
-    private String estimatedDuration ;
+    private String estimatedDuration;
 
-    @Column(name = "available")
+    @Column(name = "available", nullable = false)
     private boolean available;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted =false;
+
     @Column(name ="image_url")
-    @Size(max = 4000)
+    @Size(max = 1000)
     private String imageUrl;
 
     @ManyToOne
@@ -68,11 +71,11 @@ public class VehicleCare {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public Long getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 
@@ -90,6 +93,14 @@ public class VehicleCare {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Shop getShop() {

@@ -1,6 +1,7 @@
 package com.example.vehicleService.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,9 @@ import java.time.LocalDate;
 
 @Table(name = "customer")
 @Entity
-
-public class Customer {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Customer extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,27 +24,22 @@ public class Customer {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "address")
+    @Column(name = "address", nullable = false)
+    @Size(max = 1000)
     private String address;
+
+    @Column(name = "district", nullable = false)
+    private String district;
 
     @Column(name = "dob")
     private LocalDate dob;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
-
-    public Customer() {
-    }
-
-    public Customer(Long id, String name, String phoneNumber, String address, LocalDate dob, User user) {
-        this.id = id;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.dob = dob;
-        this.user = user;
-    }
 
     public Long getId() {
         return id;
@@ -54,6 +51,14 @@ public class Customer {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setName(String name) {
@@ -70,6 +75,14 @@ public class Customer {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     public void setAddress(String address) {

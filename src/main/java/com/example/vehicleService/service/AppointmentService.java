@@ -6,6 +6,7 @@ import com.example.vehicleService.entity.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface AppointmentService {
@@ -16,4 +17,6 @@ public interface AppointmentService {
     List<Appointment> getByCurrentCustomer();
     List<Appointment> getByCurrentShop();
     void updateStatus(Status status, Long appointmentId);
+    long countByDate(LocalDate date);
+    long countByDateAndCurrentShop(LocalDate date);
 }

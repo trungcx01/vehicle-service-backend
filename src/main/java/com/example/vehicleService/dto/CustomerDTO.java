@@ -12,6 +12,7 @@ public class CustomerDTO {
     private String phoneNumber;
     private LocalDate dob;
     private String address;
+    private String district;
     private Long userId;
 
     public CustomerDTO() {
@@ -64,6 +65,14 @@ public class CustomerDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     public LocalDate getDob() {

@@ -1,6 +1,7 @@
 package com.example.vehicleService.service;
 
 import com.example.vehicleService.dto.EmailDetail;
+import com.example.vehicleService.dto.ForgotPasswordDTO;
 import com.example.vehicleService.dto.LoginDTO;
 import com.example.vehicleService.dto.UserRegisterDTO;
 import com.example.vehicleService.entity.User;
@@ -12,8 +13,8 @@ public interface AuthService {
     User signUp(UserRegisterDTO userRegisterDTO);
     User resetActivationKey();
     User activateUser(String key);
-    User resetResetKey(String email);
-    User resetPassword(String key);
+    User sendResetKey(String email);
+    User resetPassword(ForgotPasswordDTO forgotPasswordDTO);
     User getCurrentUser();
 
     void changePassword(String oldPassword, String newPassword);

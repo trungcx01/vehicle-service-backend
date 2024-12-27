@@ -1,25 +1,19 @@
 package com.example.vehicleService.entity;
 
 import com.example.vehicleService.entity.enums.PaymentMethod;
+import com.example.vehicleService.entity.enums.ServiceType;
 import com.example.vehicleService.entity.enums.Status;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payment")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Payment {
+public class Payment extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,21 +22,12 @@ public class Payment {
     private double amount;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "payment_method")
+    @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
-    private Status paymentStatus;
-
-    @ManyToOne
-    @JoinColumn(name = "appointment_id")
-//    @JsonIgnoreProperties("vehicleCares")
-    private Appointment appointment;
-
-    @ManyToOne
-    @JoinColumn(name = "emergency_request_id")
-    private EmergencyRequest emergencyRequest;
+    private Status status;
 
     @Column(name = "transaction_reference")
     private String transactionReference;
@@ -51,18 +36,17 @@ public class Payment {
     @Size(max = 3000)
     private String payLink;
 
-    @Column(name = "created_at")
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
     @Column(name="order_info")
     @Size(max = 3000)
     private String orderInfo;
 
+    @Column(name = "service_type")
+    @Enumerated(value = EnumType.STRING)
+    private ServiceType serviceType;
+
+    @OneToOne
+    @JoinColumn(name = "base_service_id", nullable = false)
+    private BaseService baseService;
 
 //    @AssertTrue(message = "Payment chỉ đc liên kết với Appointment hoặc EmergencyRequest")
 //    public boolean isValidPayment(){
@@ -97,29 +81,14 @@ public class Payment {
         this.paymentMethod = paymentMethod;
     }
 
-    public Status getPaymentStatus() {
-        return paymentStatus;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setPaymentStatus(Status paymentStatus) {
-        this.paymentStatus = paymentStatus;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
-    public Appointment getAppointment() {
-        return appointment;
-    }
-
-    public void setAppointment(Appointment appointment) {
-        this.appointment = appointment;
-    }
-
-    public EmergencyRequest getEmergencyRequest() {
-        return emergencyRequest;
-    }
-
-    public void setEmergencyRequest(EmergencyRequest emergencyRequest) {
-        this.emergencyRequest = emergencyRequest;
-    }
 
     public String getTransactionReference() {
         return transactionReference;
@@ -127,22 +96,6 @@ public class Payment {
 
     public void setTransactionReference(String transactionReference) {
         this.transactionReference = transactionReference;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public String getPayLink() {
@@ -159,5 +112,22 @@ public class Payment {
 
     public void setOrderInfo(String orderInfo) {
         this.orderInfo = orderInfo;
+    }
+
+    public BaseService getBaseService() {
+        return baseService;
+    }
+
+
+
+    public void setBaseService(BaseService baseService) {
+        this.baseService = baseService;
+    }
+    public ServiceType getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
     }
 }

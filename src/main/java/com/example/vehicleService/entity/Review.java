@@ -1,5 +1,6 @@
 package com.example.vehicleService.entity;
 
+import com.example.vehicleService.entity.enums.ServiceType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "review")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
+public class Review extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,17 +25,20 @@ public class Review {
     @Column(name = "rate", nullable = false)
     private Long rate;
 
-    @CreationTimestamp
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "image_url")
+    private String imageUrl;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
 
-    @ManyToOne
-    @JoinColumn(name = "shop_id", nullable = false)
-    private Shop shop;
+    @Column(name = "service_type", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private ServiceType serviceType;
+
+
+    @OneToOne
+    @JoinColumn(name = "base_service_id", nullable = false)
+    private BaseService baseService;
 
     public Long getId() {
         return id;
@@ -46,6 +50,14 @@ public class Review {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setDescription(String description) {
@@ -60,27 +72,28 @@ public class Review {
         this.rate = rate;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public Customer getCustomer() {
-        return customer;
+
+    public BaseService getBaseService() {
+        return baseService;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setBaseService(BaseService baseService) {
+        this.baseService = baseService;
     }
 
-    public Shop getShop() {
-        return shop;
+    public ServiceType getServiceType() {
+        return serviceType;
     }
 
-    public void setShop(Shop shop) {
-        this.shop = shop;
+    public void setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
     }
 }

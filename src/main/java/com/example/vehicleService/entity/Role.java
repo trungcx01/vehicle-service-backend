@@ -21,11 +21,11 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "role")
-public class Role implements Serializable {
-    private static final long serialVersionUID = 1L;
+@NoArgsConstructor
+@AllArgsConstructor
+public class Role  {
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -36,15 +36,6 @@ public class Role implements Serializable {
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
     private Set<User> users = new HashSet<>();
-
-    public Role() {
-    }
-
-    public Role(Long id, String name, Set<User> users) {
-        this.id = id;
-        this.name = name;
-        this.users = users;
-    }
 
     public Long getId() {
         return id;

@@ -61,16 +61,16 @@ public class AuthController {
     }
 
     @PostMapping("request-reset-password")
-    public ResponseEntity<?> requestResetPassword(String email){
-        User user = authService.resetResetKey(email);
+    public ResponseEntity<?> requestResetPassword(@RequestParam String email){
+        User user = authService.sendResetKey(email);
         mailService.sendTextMail(new EmailDetail(user.getEmail(),
                 "Reset password for your account!", "Your reset code: " + user.getResetKey()));
         return ResponseEntity.ok(new ResponseMessage("Sent reset key to" + user.getEmail() + " successfully!", LocalDateTime.now()));
     }
 
     @PostMapping("reset-password")
-    public ResponseEntity<?> resetPassword(String key){
-        User user = authService.resetPassword(key);
+    public ResponseEntity<?> resetPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO){
+        User user = authService.resetPassword(forgotPasswordDTO);
         if (user == null){
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Fail to reset password!");
         }

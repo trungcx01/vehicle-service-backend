@@ -61,7 +61,9 @@ public class ShopServiceImpl implements ShopService{
         Shop shop = shopRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Shop!")
         );
-        shopRepository.delete(shop);
+        shop.setDeleted(true);
+        shop.getUser().setLocked(true);
+        shopRepository.save(shop);
     }
 
     @Override
@@ -77,7 +79,7 @@ public class ShopServiceImpl implements ShopService{
     }
 
     @Override
-    public List<Shop> searchByName(String name) {
-        return shopRepository.findByNameContainingIgnoreCase(name);
+    public List<Shop> search(String name, String district) {
+        return shopRepository.searchShop(name, district);
     }
 }

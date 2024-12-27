@@ -72,14 +72,31 @@ public class ProposalServiceImpl implements ProposalService {
         Proposal proposal = proposalRepository.findById(proposalId).orElseThrow(
                 () -> new EntityNotFoundException("Not Found Proposal!")
         );
+
+        List<Proposal> allProposalsOfRequest = proposalRepository.findByEmergencyRequestId(proposal.getEmergencyRequest().getId());
+
+        for (Proposal x : allProposalsOfRequest){
+            if (x.getStatus() != Status.ACCEPTED) {
+                x.setStatus(Status.DECLINED);
+            }
+        }
+
+        proposalRepository.saveAll(allProposalsOfRequest);
+
+        proposalRepository.flush();
+
         proposal.setStatus(Status.ACCEPTED);
         proposal = proposalRepository.save(proposal);
+
         EmergencyRequest emergencyRequest = proposal.getEmergencyRequest();
         emergencyRequest.setRequestStatus(Status.ACCEPTED);
-//        emergencyRequest.setSelectedProposal(proposal);
         emergencyRequestRepository.save(emergencyRequest);
+
+        emergencyRequestRepository.flush();
+
         return proposal;
     }
+
 
     @Override
     public Proposal checkSendProposal(Long emergencyRequestId) {
@@ -92,5 +109,14 @@ public class ProposalServiceImpl implements ProposalService {
             throw new BlogAPIException(HttpStatus.NOT_FOUND, "Không tìm thấy proposal nào!");
         }
         return proposal;
+    }
+
+    @Override
+    public void updateStatus(Status status, Long id) {
+        Proposal proposal = proposalRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Not found proposal!")
+        );
+        proposal.setStatus(status);
+        proposalRepository.save(proposal);
     }
 }

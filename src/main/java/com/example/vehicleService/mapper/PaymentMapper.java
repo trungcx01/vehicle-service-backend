@@ -4,17 +4,16 @@ import com.example.vehicleService.dto.PaymentDTO;
 import com.example.vehicleService.entity.Payment;
 import com.example.vehicleService.repository.AppointmentRepository;
 import com.example.vehicleService.repository.EmergencyRequestRepository;
+import com.example.vehicleService.repository.ProposalRepository;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {AppointmentMapper.class, EmergencyRequestMapper.class})
+@Mapper(componentModel = "spring", uses = {})
 public interface PaymentMapper extends EntityMapper<PaymentDTO, Payment>{
-    @Mapping(source = "appointmentId", target = "appointment")
-    @Mapping(source = "emergencyRequestId", target = "emergencyRequest")
-    Payment toEntity(PaymentDTO dto, @Context AppointmentRepository appointmentRepository, @Context EmergencyRequestRepository emergencyRequestRepository);
 
-    @Mapping(source = "appointment.id", target = "appointmentId")
-    @Mapping(source = "emergencyRequest.id", target = "emergencyRequestId")
+    Payment toEntity(PaymentDTO dto);
+
+
     PaymentDTO toDto(Payment entity);
 }

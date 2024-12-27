@@ -16,5 +16,5 @@ public interface ShopService {
     void delete(Long id);
     List<Shop> findTop6ByOrderByRatingDesc();
     Shop getCurrentShop();
-    List<Shop> searchByName(String name);
+    List<Shop> search(String name, String district);
 }

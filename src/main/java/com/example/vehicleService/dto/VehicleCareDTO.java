@@ -13,7 +13,7 @@ public class VehicleCareDTO {
     private Long id;
     private String name;
     private String description;
-    private Double price;
+    private Long price;
     private String estimatedDuration ;
     private boolean available = true;
     private Long shopId;
@@ -42,11 +42,12 @@ public class VehicleCareDTO {
         this.description = description;
     }
 
-    public Double getPrice() {
+
+    public Long getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 

@@ -5,19 +5,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "proposal")
+@DiscriminatorValue("PROPOSAL")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Proposal {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Proposal extends BaseService{
     @ManyToOne
     @JoinColumn(name = "shop_id", nullable = false)
     private Shop shop;
@@ -32,22 +26,6 @@ public class Proposal {
 
     @Column(name = "expected_price", nullable = false)
     private Long expectedPrice;
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private Status status;
-
-    @CreationTimestamp
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Shop getShop() {
         return shop;
@@ -81,19 +59,4 @@ public class Proposal {
         this.expectedPrice = expectedPrice;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

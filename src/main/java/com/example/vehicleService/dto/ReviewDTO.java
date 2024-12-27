@@ -19,7 +19,10 @@ public class ReviewDTO {
     private Long rate;
     @Null
     private Long customerId;
-    private Long shopId;
+   @Null
+   private Long appointmentId;
+   @Null
+   private Long proposalId;
 
     public Long getId() {
         return id;
@@ -53,11 +56,19 @@ public class ReviewDTO {
         this.customerId = customerId;
     }
 
-    public Long getShopId() {
-        return shopId;
+    public Long getAppointmentId() {
+        return appointmentId;
     }
 
-    public void setShopId(Long shopId) {
-        this.shopId = shopId;
+    public void setAppointmentId(Long appointmentId) {
+        this.appointmentId = appointmentId;
+    }
+
+    public Long getProposalId() {
+        return proposalId;
+    }
+
+    public void setProposalId(Long proposalId) {
+        this.proposalId = proposalId;
     }
 }

@@ -61,7 +61,9 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(id).orElseThrow(
                 ()-> new EntityNotFoundException("Not found Customer!")
         );
-        customerRepository.delete(customer);
+        customer.setDeleted(true);
+        customer.getUser().setLocked(true);
+        customerRepository.save(customer);
     }
 
     @Override

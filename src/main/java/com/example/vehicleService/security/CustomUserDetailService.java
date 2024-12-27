@@ -1,7 +1,9 @@
 package com.example.vehicleService.security;
 
 import com.example.vehicleService.entity.User;
+import com.example.vehicleService.exception.BlogAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +30,9 @@ public class CustomUserDetailService implements UserDetailsService{
         User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail).orElseThrow(
                 () -> new UsernameNotFoundException("User not found with username or email: " + usernameOrEmail)
         );
+        if (user.isLocked()) {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Bạn không thể đăng nhập đươc. Vui lòng liên hệ quản trị viên để biết thêm lý do.");
+        }
 
         Set<GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);

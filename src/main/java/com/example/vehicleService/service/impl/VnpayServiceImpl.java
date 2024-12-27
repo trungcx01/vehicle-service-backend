@@ -4,15 +4,19 @@ import com.example.vehicleService.config.VnpayConfig;
 import com.example.vehicleService.dto.PaymentDTO;
 import com.example.vehicleService.dto.VnpayResponseDTO;
 import com.example.vehicleService.entity.Appointment;
-import com.example.vehicleService.entity.EmergencyRequest;
+
+import com.example.vehicleService.entity.BaseService;
 import com.example.vehicleService.entity.Payment;
+import com.example.vehicleService.entity.Proposal;
 import com.example.vehicleService.entity.enums.Status;
 import com.example.vehicleService.mapper.PaymentMapper;
 import com.example.vehicleService.repository.PaymentRepository;
+import com.example.vehicleService.repository.ProposalRepository;
 import com.example.vehicleService.service.VnpayService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -26,10 +30,14 @@ import java.util.*;
 public class VnpayServiceImpl implements VnpayService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
+    private final ProposalRepository proposalRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public VnpayServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper) {
+    public VnpayServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper, ProposalRepository proposalRepository, SimpMessagingTemplate simpMessagingTemplate) {
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
+        this.proposalRepository = proposalRepository;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @Override
@@ -118,22 +126,20 @@ public class VnpayServiceImpl implements VnpayService {
         String orderInfo = request.getParameter("vnp_OrderInfo");
         Payment payment = paymentRepository.findByTransactionReference(transactionReference);
         if (responseCode.equals("00")){
-            Appointment appointment = payment.getAppointment();
-            EmergencyRequest emergencyRequest = payment.getEmergencyRequest();
-            if (emergencyRequest == null){
-                appointment.setStatus(Status.PAID);
-            }
-            payment.setPaymentStatus(Status.ACCEPTED);
+            payment.setStatus(Status.FINISHED);
             payment.setOrderInfo(orderInfo);
+            BaseService baseService = payment.getBaseService();
+            if (baseService instanceof Proposal ){
+                Proposal proposal = proposalRepository.findById(baseService.getId()).orElseThrow(
+                        () -> new EntityNotFoundException("Not found Proposal!")
+                );
+                simpMessagingTemplate.convertAndSendToUser(proposal.getShop().getUser().getUsername(), "/queue/proposal",
+                        "ACCEPTED_PROPOSAL: " + proposal.getId() + " FOR EMERGENCY_REQUEST: " + proposal.getEmergencyRequest().getId());
+            }
             response.sendRedirect("http://localhost:4200/payment-success/" + payment.getId());
         }
         else{
-            Appointment appointment = payment.getAppointment();
-            EmergencyRequest emergencyRequest = payment.getEmergencyRequest();
-            if (emergencyRequest == null){
-                appointment.setStatus(Status.CANCELED);
-            }
-            payment.setPaymentStatus(Status.DECLINED);
+            payment.setStatus(Status.CANCELED);
             payment.setOrderInfo(orderInfo);
             response.sendRedirect("http://localhost:4200/payment-success/" + payment.getId());
         }

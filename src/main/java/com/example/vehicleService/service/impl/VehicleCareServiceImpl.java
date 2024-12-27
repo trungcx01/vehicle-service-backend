@@ -67,7 +67,8 @@ public class VehicleCareServiceImpl implements VehicleCareService {
         VehicleCare vehicleCare = vehicleCareRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Vehicle Care!")
         );
-        vehicleCareRepository.delete(vehicleCare);
+        vehicleCare.setDeleted(true);
+        vehicleCareRepository.save(vehicleCare);
     }
 
     @Override
@@ -86,7 +87,7 @@ public class VehicleCareServiceImpl implements VehicleCareService {
     }
 
     @Override
-    public List<VehicleCare> search(String name, Long start, Long end) {
-        return vehicleCareRepository.findByNameContainingIgnoreCaseAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual(name, start, end);
+    public List<VehicleCare> search(String name, String district, Long priceFrom, Long priceTo) {
+        return vehicleCareRepository.searchVehicleCare(name, district, priceFrom, priceTo);
     }
 }

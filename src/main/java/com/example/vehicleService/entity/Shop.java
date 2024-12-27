@@ -16,7 +16,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Shop {
+public class Shop extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,13 +27,16 @@ public class Shop {
     @Column(name = "address", nullable = false)
     private String address;
 
+    @Column(name = "district", nullable = false)
+    private String district;
+
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "openHour", nullable = false)
+    @Column(name = "open_hour", nullable = false)
     private LocalTime openHour;
 
-    @Column(name = "closeHour", nullable = false)
+    @Column(name = "close_hour", nullable = false)
     private LocalTime closeHour;
 
     @Column(name = "description")
@@ -42,7 +45,10 @@ public class Shop {
     @Column(name = "rating")
     private Double rating = 0d;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
+
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})  // Khi lưu/cập nhật Shop thì User cũng lưu theo
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
@@ -74,8 +80,24 @@ public class Shop {
         return address;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     public String getPhoneNumber() {

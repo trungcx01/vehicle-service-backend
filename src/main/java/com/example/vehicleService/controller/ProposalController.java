@@ -2,16 +2,14 @@ package com.example.vehicleService.controller;
 
 import com.example.vehicleService.dto.ProposalDTO;
 import com.example.vehicleService.dto.ResponseMessage;
-import com.example.vehicleService.dto.ReviewDTO;
 import com.example.vehicleService.entity.Proposal;
+import com.example.vehicleService.entity.enums.Status;
 import com.example.vehicleService.service.LiveTrackingSubcriber;
 import com.example.vehicleService.service.NotificationService;
 import com.example.vehicleService.service.ProposalService;
-import com.example.vehicleService.service.RedisPubSubService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -44,7 +42,7 @@ public class ProposalController {
     @PostMapping
     public ResponseEntity<?> add(@RequestBody ProposalDTO proposalDTO){
         Proposal proposal = proposalService.save(proposalDTO);
-        simpMessagingTemplate.convertAndSendToUser(proposal.getEmergencyRequest().getCustomer().getUser().getUsername(), "/queue/proposal", "PROPOSAL: " + proposal.getId());
+        simpMessagingTemplate.convertAndSendToUser(proposal.getEmergencyRequest().getCustomer().getUser().getUsername(), "/queue/proposal", "PROPOSAL: " + proposal.getId() + " FROM SHOP: " + proposal.getShop().getName());
         System.out.println("ỉuhfoidjfhueiide");
         return ResponseEntity.ok(proposal);
     }
@@ -57,8 +55,8 @@ public class ProposalController {
     @PutMapping("/{id}")
     public ResponseEntity<?> acceptProposal(@PathVariable Long id){
         Proposal proposal = proposalService.acceptProposal(id);
-        simpMessagingTemplate.convertAndSendToUser(proposal.getShop().getUser().getUsername(), "/queue/proposal",
-                "ACCEPTED_PROPOSAL: " + proposal.getId() + " FOR EMERGENCY_REQUEST: " + proposal.getEmergencyRequest().getId());
+//        simpMessagingTemplate.convertAndSendToUser(proposal.getShop().getUser().getUsername(), "/queue/proposal",
+//                "ACCEPTED_PROPOSAL: " + proposal.getId() + " FOR EMERGENCY_REQUEST: " + proposal.getEmergencyRequest().getId());
         return ResponseEntity.ok(new ResponseMessage("Accept proposal successfully!", LocalDateTime.now()));
     }
 
@@ -73,5 +71,9 @@ public class ProposalController {
         return ResponseEntity.ok(proposalService.getByEmergencyRequest(erId));
     }
 
-
+    @PutMapping("/update-status/{id}")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam("status") Status status){
+        proposalService.updateStatus(status, id);
+        return ResponseEntity.ok(new ResponseMessage("Cập nhật thành công", LocalDateTime.now()));
+    }
 }

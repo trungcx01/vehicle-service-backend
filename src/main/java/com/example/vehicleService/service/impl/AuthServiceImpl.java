@@ -3,6 +3,7 @@ package com.example.vehicleService.service.impl;
 import ch.qos.logback.core.testUtil.RandomUtil;
 import com.cloudinary.Cloudinary;
 import com.example.vehicleService.dto.EmailDetail;
+import com.example.vehicleService.dto.ForgotPasswordDTO;
 import com.example.vehicleService.dto.LoginDTO;
 import com.example.vehicleService.dto.UserRegisterDTO;
 import com.example.vehicleService.entity.Role;
@@ -76,10 +77,10 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
         user.setActivated(false);
         user.setActivationKey(String.valueOf(new Random().nextInt(999999 - 100000 + 1) + 100000));
-        Role role = roleRepository.findByName("USER").orElseThrow(
-                () -> new EntityNotFoundException("Role USER not found")
-        );
-        user.setRoles(Set.of(role));
+//        Role role = roleRepository.findByName("USER").orElseThrow(
+//                () -> new EntityNotFoundException("Role USER not found")
+//        );
+//        user.setRoles(Set.of(role));
         User savedUser = userRepository.save(user);
         return savedUser;
     }
@@ -108,7 +109,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public User resetResetKey(String email) {
+    public User sendResetKey(String email) {
         return userRepository.findByEmail(email).map(
                 user -> {
                     user.setResetKey(String.valueOf(new Random().nextInt(999999 - 100000 + 1) + 100000));
@@ -118,11 +119,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public User resetPassword(String key) {
-        return userRepository.findByResetKey(key).map(
+    public User resetPassword(ForgotPasswordDTO forgotPasswordDTO) {
+        return userRepository.findByResetKey(forgotPasswordDTO.getResetKey()).map(
                 user -> {
                     user.setResetDate(LocalDateTime.now());
                     user.setResetKey(null);
+                    user.setPassword(passwordEncoder.encode(forgotPasswordDTO.getNewPassword()));
                     return userRepository.save(user);
                 }
         ).orElseThrow(() -> new EntityNotFoundException("User not found!"));

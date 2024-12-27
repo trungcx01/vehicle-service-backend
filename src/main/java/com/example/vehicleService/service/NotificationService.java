@@ -12,7 +12,7 @@ public interface NotificationService {
 //    void sendToUser(String userId, String channel, String message);
     Page<Notification> getAllPagination(Pageable pageable);
     Notification getById(Long id);
-    List<Notification> getUnreadNotificationOfCurrentUser();
+//    List<Notification> getUnreadNotificationOfCurrentUser();
     List<Notification> getByCurrentUser();
     void readAllNotificationsOfCurrentUser();
     void readNotification(Long notificationId);

@@ -14,5 +14,7 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
     @Query("SELECT s FROM Shop s ORDER BY s.rating DESC")
     List<Shop> findTop6ByOrderByRatingDesc();
 
-    List<Shop> findByNameContainingIgnoreCase(String name);
+    @Query(value = "SELECT * FROM shop s " +
+            "WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', ?1, '%'))  and LOWER(s.district) LIKE LOWER(CONCAT('%', ?2, '%'))", nativeQuery = true)
+    List<Shop> searchShop(String name, String district);
 }

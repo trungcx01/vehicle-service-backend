@@ -1,16 +1,12 @@
 package com.example.vehicleService.dto;
 
-import com.example.vehicleService.entity.Customer;
-import com.example.vehicleService.entity.VehicleCare;
 import com.example.vehicleService.entity.enums.Status;
 import com.example.vehicleService.entity.enums.VehicleType;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;

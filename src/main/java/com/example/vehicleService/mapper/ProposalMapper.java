@@ -25,7 +25,8 @@ public interface ProposalMapper extends EntityMapper<ProposalDTO, Proposal> {
 
     default Proposal fromId(Long id, @Context ProposalRepository proposalRepository){
         if (id == null){
-            throw new BlogAPIException(HttpStatus.NOT_FOUND, "Please fill in proposal id!");
+            return null;
+//            throw new BlogAPIException(HttpStatus.NOT_FOUND, "Please fill in proposal id!");
         }
         Proposal proposal = proposalRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Proposal!")

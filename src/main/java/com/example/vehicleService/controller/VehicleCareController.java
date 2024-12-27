@@ -47,6 +47,12 @@ public class VehicleCareController {
         return ResponseEntity.ok(new ResponseMessage("Delete Vehicle care successfully!", LocalDateTime.now()));
     }
 
+//    @DeleteMapping("{id}")
+//    public ResponseEntity<?> adminDelete(@PathVariable Long id){
+//        vehicleCareService.delete(id);
+//        return ResponseEntity.ok(new ResponseMessage("Delete Vehicle care successfully!", LocalDateTime.now()));
+//    }
+
     @GetMapping("/shop-{shopId}")
     public ResponseEntity<?> getByShop(@PathVariable Long shopId){
         return ResponseEntity.ok(vehicleCareService.getByShop(shopId));
@@ -58,8 +64,8 @@ public class VehicleCareController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchByName(@RequestParam(value = "name") String name, @RequestParam(value = "start", required = false) Long start, @RequestParam(value = "end", required = false) Long end){
-        return ResponseEntity.ok(vehicleCareService.search(name, start, end));
+    public ResponseEntity<?> searchVehicleCare(@RequestParam(value = "name") String name, @RequestParam("district") String district, @RequestParam(value = "priceFrom", required = false) Long priceFrom, @RequestParam(value = "priceTo", required = false) Long priceTo){
+        return ResponseEntity.ok(vehicleCareService.search(name, district, priceFrom, priceTo));
     }
 
 }

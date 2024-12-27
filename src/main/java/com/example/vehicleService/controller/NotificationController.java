@@ -29,10 +29,10 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.getByCurrentUser());
     }
 
-    @GetMapping("current-user/unread")
-    public ResponseEntity<?> getUnreadOfCurrentUser(){
-        return ResponseEntity.ok(notificationService.getUnreadNotificationOfCurrentUser());
-    }
+//    @GetMapping("current-user/unread")
+//    public ResponseEntity<?> getUnreadOfCurrentUser(){
+//        return ResponseEntity.ok(notificationService.getUnreadNotificationOfCurrentUser());
+//    }
 
 //    @PostMapping("/send-message")
 //    public void sendLocationToCustomer()

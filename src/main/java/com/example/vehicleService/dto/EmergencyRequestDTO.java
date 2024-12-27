@@ -1,17 +1,11 @@
 package com.example.vehicleService.dto;
 
-import com.example.vehicleService.entity.Customer;
-import com.example.vehicleService.entity.Shop;
 import com.example.vehicleService.entity.enums.Status;
 import com.example.vehicleService.entity.enums.VehicleType;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @NoArgsConstructor

@@ -39,4 +39,27 @@ public class UserServiceImpl implements UserService{
         user.setImageUrl(avatar.get("secure_url").toString());
         return userRepository.save(user);
     }
+
+    @Override
+    public Long getUserByMonth(Long month, Long year) {
+        return userRepository.getUserByMonth(month, year);
+    }
+
+    @Override
+    public void lockAccount(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException("Not found user!")
+        );
+        user.setLocked(true);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void unlockAccount(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException("Not found user!")
+        );
+        user.setLocked(false);
+        userRepository.save(user);
+    }
 }

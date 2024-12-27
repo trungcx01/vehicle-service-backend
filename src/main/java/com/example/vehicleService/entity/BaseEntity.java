@@ -19,11 +19,11 @@ import lombok.Setter;
 @MappedSuperclass   //Các lớp con có thể kế thừa lớp này, nhưng class này ko phải 1 bảng riêng biệt
 public abstract class BaseEntity implements Serializable{
     @CreationTimestamp
-    @Column(name = "create_at", updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createAt;
 
     @UpdateTimestamp
-    @Column(name = "update_at")
+    @Column(name = "updated_at")
     private LocalDateTime updateAt;
 
     public LocalDateTime getCreateAt() {

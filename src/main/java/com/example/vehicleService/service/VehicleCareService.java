@@ -17,5 +17,5 @@ public interface VehicleCareService {
     void delete(Long id);
     List<VehicleCare> getByShop(Long shopId);
     List<VehicleCare> getByShop();
-    List<VehicleCare> search(String name, Long start, Long end);
+    List<VehicleCare> search(String name, String district, Long priceFrom, Long priceTo);
 }
