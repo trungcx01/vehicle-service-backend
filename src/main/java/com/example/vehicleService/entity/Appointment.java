@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,11 +18,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Appointment extends BaseService{
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
-
-    @Column(name = "time", nullable = false)
-    private LocalTime time;
+    @Column(name = "date_and_time", nullable = false)
+    private LocalDateTime dateAndTime;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false)
@@ -46,21 +44,12 @@ public class Appointment extends BaseService{
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getDateAndTime() {
+        return dateAndTime;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
+    public void setDateAndTime(LocalDateTime dateAndTime) {
+        this.dateAndTime = dateAndTime;
     }
 
     public VehicleType getVehicleType() {

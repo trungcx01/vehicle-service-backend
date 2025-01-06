@@ -30,7 +30,7 @@ public class ProposalController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id){
+    public ResponseEntity<?> getById(@PathVariable Integer id){
         return ResponseEntity.ok(proposalService.getById(id));
     }
 
@@ -53,7 +53,7 @@ public class ProposalController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> acceptProposal(@PathVariable Long id){
+    public ResponseEntity<?> acceptProposal(@PathVariable Integer id){
         Proposal proposal = proposalService.acceptProposal(id);
 //        simpMessagingTemplate.convertAndSendToUser(proposal.getShop().getUser().getUsername(), "/queue/proposal",
 //                "ACCEPTED_PROPOSAL: " + proposal.getId() + " FOR EMERGENCY_REQUEST: " + proposal.getEmergencyRequest().getId());
@@ -61,18 +61,18 @@ public class ProposalController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
         proposalService.deleteById(id);
         return ResponseEntity.ok(new ResponseMessage("Delete Proposal successfully!", LocalDateTime.now()));
     }
 
     @GetMapping("emergency-request-{erId}")
-    public ResponseEntity<?> getByEmergencyRequest(@PathVariable Long erId){
+    public ResponseEntity<?> getByEmergencyRequest(@PathVariable Integer erId){
         return ResponseEntity.ok(proposalService.getByEmergencyRequest(erId));
     }
 
     @PutMapping("/update-status/{id}")
-    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam("status") Status status){
+    public ResponseEntity<?> updateStatus(@PathVariable Integer id, @RequestParam("status") Status status){
         proposalService.updateStatus(status, id);
         return ResponseEntity.ok(new ResponseMessage("Cập nhật thành công", LocalDateTime.now()));
     }

@@ -14,21 +14,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewDTO {
     @Null
-    private Long id;
+    private Integer id;
     private String description;
-    private Long rate;
-    @Null
-    private Long customerId;
+    private Integer rate;
+//    @Null
+//    private Long customerId;
    @Null
-   private Long appointmentId;
+   private Integer appointmentId;
    @Null
-   private Long proposalId;
+   private Integer proposalId;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -40,35 +40,36 @@ public class ReviewDTO {
         this.description = description;
     }
 
-    public Long getRate() {
+    public Integer getRate() {
         return rate;
     }
 
-    public void setRate(Long rate) {
+    public void setRate(Integer rate) {
         this.rate = rate;
     }
 
-    public Long getCustomerId() {
-        return customerId;
-    }
+//    public Long getCustomerId() {
+//        return customerId;
+//    }
+//
+//    public void setCustomerId(Long customerId) {
+//        this.customerId = customerId;
+//    }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
 
-    public Long getAppointmentId() {
+    public Integer getAppointmentId() {
         return appointmentId;
     }
 
-    public void setAppointmentId(Long appointmentId) {
+    public void setAppointmentId(Integer appointmentId) {
         this.appointmentId = appointmentId;
     }
 
-    public Long getProposalId() {
+    public Integer getProposalId() {
         return proposalId;
     }
 
-    public void setProposalId(Long proposalId) {
+    public void setProposalId(Integer proposalId) {
         this.proposalId = proposalId;
     }
 }

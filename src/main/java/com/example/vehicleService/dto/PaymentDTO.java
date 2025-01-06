@@ -11,38 +11,31 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PaymentDTO {
     @Null
-    private Long id;
-    private double amount;
+    private Integer id;
+    private long amount;
     private PaymentMethod paymentMethod;
     private Status status;
     @Null
-    private Long appointmentId;
+    private Integer appointmentId;
     @Null
-    private Long proposalId;
+    private Integer proposalId;
     private String transactionReference;
 
 //    @Null
 //    private String returnUrl;
 
-    @AssertTrue(message = "Payment chỉ đc liên kết với Appointment hoặc EmergencyRequest")
-    public boolean isValidPayment(){
-        return (appointmentId != null && proposalId == null)
-                || (appointmentId == null && proposalId != null);
-    }
+//    @AssertTrue(message = "Payment chỉ đc liên kết với Appointment hoặc EmergencyRequest")
+//    public boolean isValidPayment(){
+//        return (appointmentId != null && proposalId == null)
+//                || (appointmentId == null && proposalId != null);
+//    }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public double getAmount() {
+    public long getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(long amount) {
         this.amount = amount;
     }
 
@@ -62,19 +55,27 @@ public class PaymentDTO {
         this.status = status;
     }
 
-    public Long getAppointmentId() {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getAppointmentId() {
         return appointmentId;
     }
 
-    public void setAppointmentId(Long appointmentId) {
+    public void setAppointmentId(Integer appointmentId) {
         this.appointmentId = appointmentId;
     }
 
-    public Long getProposalId() {
+    public Integer getProposalId() {
         return proposalId;
     }
 
-    public void setProposalId(Long proposalId) {
+    public void setProposalId(Integer proposalId) {
         this.proposalId = proposalId;
     }
 

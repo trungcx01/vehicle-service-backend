@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Set;
 
-public interface NotificationRepository extends JpaRepository<Notification, Long> {
+public interface NotificationRepository extends JpaRepository<Notification, Integer> {
     List<Notification> findByUsers(Set<User> users);
 //    List<Notification> findByUsersAndNotificationStatus(Set<User> users, NotificationStatus notificationStatus);
 }

@@ -35,7 +35,7 @@ public class VehicleCareServiceImpl implements VehicleCareService {
     }
 
     @Override
-    public VehicleCare getById(Long id) {
+    public VehicleCare getById(Integer id) {
         return vehicleCareRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Vehicle Care!")
         );
@@ -63,7 +63,7 @@ public class VehicleCareServiceImpl implements VehicleCareService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         VehicleCare vehicleCare = vehicleCareRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Vehicle Care!")
         );
@@ -72,7 +72,7 @@ public class VehicleCareServiceImpl implements VehicleCareService {
     }
 
     @Override
-    public List<VehicleCare> getByShop(Long shopId) {
+    public List<VehicleCare> getByShop(Integer shopId) {
         Shop shop = shopRepository.findById(shopId).orElseThrow(
                 () -> new EntityNotFoundException("Not found Shop!")
         );
@@ -80,14 +80,26 @@ public class VehicleCareServiceImpl implements VehicleCareService {
     }
 
     @Override
-    public List<VehicleCare> getByShop() {
+    public Page<VehicleCare> getByShop(Pageable pageable) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Shop shop = shopRepository.findByUserUsername(username);
-        return vehicleCareRepository.findByShop(shop);
+        return vehicleCareRepository.findByShop(shop, pageable);
     }
 
     @Override
-    public List<VehicleCare> search(String name, String district, Long priceFrom, Long priceTo) {
+    public List<VehicleCare> search(String name, String district, Integer priceFrom, Integer priceTo) {
         return vehicleCareRepository.searchVehicleCare(name, district, priceFrom, priceTo);
+    }
+
+    @Override
+    public Page<VehicleCare> searchVehicleCares(String searchTerm, Pageable pageable) {
+        return vehicleCareRepository.searchVehicleCares(searchTerm, pageable);
+    }
+
+    @Override
+    public Page<VehicleCare> searchVehicleCaresByShop(String searchTerm, Pageable pageable) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Shop shop = shopRepository.findByUserUsername(username);
+        return vehicleCareRepository.searchVehicleCaresByShop(searchTerm, shop.getId(), pageable);
     }
 }

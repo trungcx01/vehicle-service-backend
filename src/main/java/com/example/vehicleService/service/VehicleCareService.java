@@ -11,11 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface VehicleCareService {
-    VehicleCare getById(Long id);
+    VehicleCare getById(Integer id);
     Page<VehicleCare> getAllPagination(Pageable pageable);
     VehicleCare save(VehicleCareDTO vehicleCareDTO, MultipartFile image);
-    void delete(Long id);
-    List<VehicleCare> getByShop(Long shopId);
-    List<VehicleCare> getByShop();
-    List<VehicleCare> search(String name, String district, Long priceFrom, Long priceTo);
+    void delete(Integer id);
+    List<VehicleCare> getByShop(Integer shopId);
+    Page<VehicleCare> getByShop(Pageable pageable);
+    List<VehicleCare> search(String name, String district, Integer priceFrom, Integer priceTo);
+    Page<VehicleCare> searchVehicleCares(String searchTerm, Pageable pageable);
+    Page<VehicleCare> searchVehicleCaresByShop(String searchTerm, Pageable pageable);
 }

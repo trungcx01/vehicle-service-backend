@@ -6,10 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import com.example.vehicleService.entity.User;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>{
+public interface UserRepository extends JpaRepository<User, Integer>{
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsernameOrEmail(String username, String email);
@@ -18,6 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long>{
     Optional<User> findByResetKey(String key);
 
     @Query(value = "SELECT COUNT(*) FROM user u " +
-            "WHERE MONTH(u.created_at) = ?1 AND YEAR(u.created_at) = ?2", nativeQuery = true)
-    Long getUserByMonth(Long month, Long year);
+            "WHERE DATE(u.created_at) = ?1", nativeQuery = true)
+    Integer getUserByDate(LocalDate date);
+
+    long count();
 }

@@ -9,34 +9,34 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProposalDTO {
     @Null
-    private Long id;
-    private Long shopId;
-    private Long emergencyRequestId;
+    private Integer id;
+    private Integer shopId;
+    private Integer emergencyRequestId;
     private Long expectedPrice;
     private String predict;
     private Status status = Status.PENDING;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getShopId() {
+    public Integer getShopId() {
         return shopId;
     }
 
-    public void setShopId(Long shopId) {
+    public void setShopId(Integer shopId) {
         this.shopId = shopId;
     }
 
-    public Long getEmergencyRequestId() {
+    public Integer getEmergencyRequestId() {
         return emergencyRequestId;
     }
 
-    public void setEmergencyRequestId(Long emergencyRequestId) {
+    public void setEmergencyRequestId(Integer emergencyRequestId) {
         this.emergencyRequestId = emergencyRequestId;
     }
 

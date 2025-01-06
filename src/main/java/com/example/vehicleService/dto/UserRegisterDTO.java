@@ -10,18 +10,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserRegisterDTO {
     @Null
-    private Long id;
+    private Integer id;
     private String username;
     private String email;
     private String password;
     @Null
     private String imageUrl;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

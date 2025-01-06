@@ -15,31 +15,38 @@ import java.util.Set;
 @AllArgsConstructor
 public class AppointmentDTO {
     @Null
-    private Long id;
+    private Integer id;
     private LocalDate date;
     private LocalTime time;
     private VehicleType vehicleType;
     private String note;
-    private Set<Long> vehicleCareIds = new HashSet<>();
-    private Long customerId;
+    private Set<Integer> vehicleCareIds = new HashSet<>();
+    private Integer customerId;
     private Status status = Status.PENDING;
 
     public Status getStatus() {
         return status;
     }
 
+    public Integer getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
+    }
+
     public void setStatus(Status status) {
         this.status = status;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-
 
     public LocalDate getDate() {
         return date;
@@ -73,19 +80,11 @@ public class AppointmentDTO {
         this.note = note;
     }
 
-    public Set<Long> getVehicleCareIds() {
+    public Set<Integer> getVehicleCareIds() {
         return vehicleCareIds;
     }
 
-    public void setVehicleCareIds(Set<Long> vehicleCareIds) {
+    public void setVehicleCareIds(Set<Integer> vehicleCareIds) {
         this.vehicleCareIds = vehicleCareIds;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
     }
 }

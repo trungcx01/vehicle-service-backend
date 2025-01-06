@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProposalRepository extends JpaRepository<Proposal, Long> {
-    List<Proposal> findByEmergencyRequestId(Long emergencyRequestId);
+public interface ProposalRepository extends JpaRepository<Proposal, Integer> {
+    List<Proposal> findByEmergencyRequestId(Integer emergencyRequestId);
     Proposal findByShopAndEmergencyRequest(Shop shop, EmergencyRequest emergencyRequest);
 }

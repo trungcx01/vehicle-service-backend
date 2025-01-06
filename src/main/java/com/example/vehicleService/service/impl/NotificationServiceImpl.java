@@ -58,7 +58,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification getById(Long id) {
+    public Notification getById(Integer id) {
         return notificationRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Notification!")
         );
@@ -92,7 +92,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void readNotification(Long notificationId) {
+    public void readNotification(Integer notificationId) {
         Notification notification = notificationRepository.findById(notificationId).orElseThrow(
                 () -> new EntityNotFoundException("Not found Notification!")
         );
@@ -101,7 +101,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void publishLiveTracking(String message, Long proposalId) {
+    public void publishLiveTracking(String message, Integer proposalId) {
         redisTemplate.convertAndSend("live-tracking/" + proposalId, message);
     }
 }

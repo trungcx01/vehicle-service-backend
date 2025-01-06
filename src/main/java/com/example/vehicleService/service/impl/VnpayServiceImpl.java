@@ -3,13 +3,11 @@ package com.example.vehicleService.service.impl;
 import com.example.vehicleService.config.VnpayConfig;
 import com.example.vehicleService.dto.PaymentDTO;
 import com.example.vehicleService.dto.VnpayResponseDTO;
-import com.example.vehicleService.entity.Appointment;
+import com.example.vehicleService.entity.*;
 
-import com.example.vehicleService.entity.BaseService;
-import com.example.vehicleService.entity.Payment;
-import com.example.vehicleService.entity.Proposal;
 import com.example.vehicleService.entity.enums.Status;
 import com.example.vehicleService.mapper.PaymentMapper;
+import com.example.vehicleService.repository.AppointmentRepository;
 import com.example.vehicleService.repository.PaymentRepository;
 import com.example.vehicleService.repository.ProposalRepository;
 import com.example.vehicleService.service.VnpayService;
@@ -25,23 +23,26 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class VnpayServiceImpl implements VnpayService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
     private final ProposalRepository proposalRepository;
+    private final AppointmentRepository appointmentRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public VnpayServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper, ProposalRepository proposalRepository, SimpMessagingTemplate simpMessagingTemplate) {
+    public VnpayServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper, ProposalRepository proposalRepository, AppointmentRepository appointmentRepository, SimpMessagingTemplate simpMessagingTemplate) {
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
         this.proposalRepository = proposalRepository;
+        this.appointmentRepository = appointmentRepository;
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @Override
-    public VnpayResponseDTO createPayment(HttpServletRequest request, Double amount, String orderNote) {
+    public VnpayResponseDTO createPayment(HttpServletRequest request, Long amount, String orderNote) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TmnCode = VnpayConfig.vnp_TmnCode;
@@ -129,13 +130,22 @@ public class VnpayServiceImpl implements VnpayService {
             payment.setStatus(Status.FINISHED);
             payment.setOrderInfo(orderInfo);
             BaseService baseService = payment.getBaseService();
+            Shop shop = null;
             if (baseService instanceof Proposal ){
                 Proposal proposal = proposalRepository.findById(baseService.getId()).orElseThrow(
                         () -> new EntityNotFoundException("Not found Proposal!")
                 );
+                shop = proposal.getShop();
                 simpMessagingTemplate.convertAndSendToUser(proposal.getShop().getUser().getUsername(), "/queue/proposal",
                         "ACCEPTED_PROPOSAL: " + proposal.getId() + " FOR EMERGENCY_REQUEST: " + proposal.getEmergencyRequest().getId());
             }
+            else {
+                Appointment appointment = appointmentRepository.findById(baseService.getId()).orElseThrow(
+                        () -> new EntityNotFoundException("Not found Appointment!")
+                );
+                shop = appointment.getVehicleCares().stream().collect(Collectors.toList()).get(0).getShop();
+            }
+            shop.setRevenue(payment.getAmount());
             response.sendRedirect("http://localhost:4200/payment-success/" + payment.getId());
         }
         else{

@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,7 +37,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment getById(Long id) {
+    public Appointment getById(Integer id) {
         return appointmentRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Appointment!")
         );
@@ -50,11 +51,13 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Appointment save(AppointmentDTO appointmentDTO) {
         Appointment appointment = appointmentMapper.toEntity(appointmentDTO, customerRepository, vehicleCareRepository);
+        LocalDateTime dateAndTime = appointmentDTO.getDate().atTime(appointmentDTO.getTime());
+        appointment.setDateAndTime(dateAndTime);
         return appointmentRepository.save(appointment);
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Appointment!")
         );
@@ -68,13 +71,13 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<Appointment> getByCurrentShop() {
+    public Page<Appointment> getByCurrentShop(Pageable pageable) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return appointmentRepository.findByVehicleCaresShopUserUsername(username);
+        return appointmentRepository.findByVehicleCaresShopUserUsername(username, pageable);
     }
 
     @Override
-    public void updateStatus(Status status, Long appointmentId) {
+    public void updateStatus(Status status, Integer appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
                 () -> new EntityNotFoundException("Not found Appointment!")
         );
@@ -83,18 +86,42 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public long countByDate(LocalDate date) {
+    public Integer countByDate(LocalDate date) {
 //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 //        Shop shop = shopRepository.findByUserUsername(username);
-//        Long shopId = shop.getId();
+//        Integer shopId = shop.getId();
         return appointmentRepository.countByDate(date);
     }
 
 
     @Override
-    public long countByDateAndCurrentShop(LocalDate date) {
+    public Integer countByDateAndCurrentShop(LocalDate date) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Shop shop = shopRepository.findByUserUsername(username);
         return  appointmentRepository.countByCurrentShopAndDate(date, shop.getId());
+    }
+
+    @Override
+    public long count() {
+        return appointmentRepository.count();
+    }
+
+    @Override
+    public long countByCurrentShop() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Shop shop = shopRepository.findByUserUsername(username);
+        return appointmentRepository.countByCurrentShop(shop.getId());
+    }
+
+    @Override
+    public Page<Appointment> searchAppointments(String searchTerm, Pageable pageable) {
+        return appointmentRepository.searchAppointments(searchTerm, pageable);
+    }
+
+    @Override
+    public Page<Appointment> searchAppointmentsInCurrentShop(String searchTerm, Pageable pageable) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Shop shop = shopRepository.findByUserUsername(username);
+        return appointmentRepository.searchAppointmentsInShop(searchTerm, shop.getId(), pageable);
     }
 }

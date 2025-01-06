@@ -3,9 +3,11 @@ package com.example.vehicleService.controller;
 import com.example.vehicleService.dto.ResponseMessage;
 import com.example.vehicleService.dto.ShopDTO;
 import com.example.vehicleService.entity.Proposal;
+import com.example.vehicleService.entity.Shop;
 import com.example.vehicleService.service.ProposalService;
 import com.example.vehicleService.service.ShopService;
 import com.example.vehicleService.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,22 +35,22 @@ public class ShopController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getShopById(@PathVariable Long id){
+    public ResponseEntity<?> getShopById(@PathVariable Integer id){
         return ResponseEntity.ok(shopService.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<?> addShop(@RequestBody ShopDTO shopDTO){
-        return ResponseEntity.ok(shopService.save(shopDTO));
+    public ResponseEntity<?> addShop(@RequestPart ShopDTO shopDTO, @RequestPart("cover")MultipartFile coverImage){
+        return ResponseEntity.ok(shopService.save(shopDTO, coverImage));
     }
 
     @PutMapping
-    public ResponseEntity<?> updateShop(@RequestBody ShopDTO shopDTO){
-        return ResponseEntity.ok(shopService.save(shopDTO));
+    public ResponseEntity<?> updateShop(@RequestPart ShopDTO shopDTO, @RequestPart(value = "cover", required = false)MultipartFile coverImage){
+        return ResponseEntity.ok(shopService.save(shopDTO, coverImage));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteShop(@PathVariable Long id){
+    public ResponseEntity<?> deleteShop(@PathVariable Integer id){
         shopService.delete(id);
         return ResponseEntity.ok(new ResponseMessage("Delete shop successfully!", LocalDateTime.now()));
     }
@@ -65,20 +67,34 @@ public class ShopController {
 
     @PutMapping("/update-info")
     @Transactional
-    public ResponseEntity<?> updateInfo(@RequestParam("avatar")MultipartFile avatar, @RequestBody ShopDTO shopDTO){
+    public ResponseEntity<?> updateInfo(@RequestParam("avatar")MultipartFile avatar, @RequestParam("cover")MultipartFile coverImage, @RequestBody ShopDTO shopDTO){
         userService.updateAvatar(avatar, null);
-        shopService.save(shopDTO);
+        shopService.save(shopDTO, coverImage);
         return ResponseEntity.ok(new ResponseMessage("Cập nhật thông tin thành công", LocalDateTime.now()));
     }
 
     @GetMapping("check-send-proposal/{erId}")
-    public ResponseEntity<?> checkSendProposal(@PathVariable Long erId){
+    public ResponseEntity<?> checkSendProposal(@PathVariable Integer erId){
         Proposal proposal = proposalService.checkSendProposal(erId);
         return ResponseEntity.ok(proposal);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchByName(@RequestParam("name") String name, @RequestParam("district") String district){
-        return ResponseEntity.ok(shopService.search(name, district));
+    public ResponseEntity<?> searchByName(@RequestParam("name") String name, @RequestParam("district") String district, @RequestParam("rating") Integer rating){
+        return ResponseEntity.ok(shopService.search(name, district, rating));
+    }
+
+    @GetMapping("/top-10-revenue")
+    public ResponseEntity<?> getTop10Revenue(){
+        return  ResponseEntity.ok(shopService.findTop10Revenue());
+    }
+
+    @GetMapping("/search-all")
+    public ResponseEntity<Page<Shop>> searchShops(
+            @RequestParam(value = "searchTerm") String searchTerm,
+            Pageable pageable) {
+
+        Page<Shop> shopsPage = shopService.searchShops(searchTerm, pageable);
+        return ResponseEntity.ok(shopsPage);
     }
 }

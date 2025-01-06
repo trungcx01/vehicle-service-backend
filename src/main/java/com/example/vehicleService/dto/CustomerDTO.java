@@ -1,37 +1,29 @@
 package com.example.vehicleService.dto;
 
 import jakarta.validation.constraints.Null;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 
+@NoArgsConstructor
+@AllArgsConstructor
 public class CustomerDTO {
     @Null
-    private Long id;
+    private Integer id;
     private String name;
     private String phoneNumber;
     private LocalDate dob;
     private String address;
     private String district;
-    private Long userId;
+    private Integer userId;
 
-    public CustomerDTO() {
-    }
-
-    public CustomerDTO(Long id, String name, String phoneNumber, LocalDate dob, String address, Long userId) {
-        this.id = id;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.dob = dob;
-        this.address = address;
-        this.userId = userId;
-    }
-
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -59,11 +51,11 @@ public class CustomerDTO {
         this.address = address;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

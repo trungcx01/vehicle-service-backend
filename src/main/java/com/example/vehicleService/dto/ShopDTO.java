@@ -10,7 +10,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class ShopDTO {
     @Null
-    private Long id;
+    private Integer id;
     private String name;
     private String phoneNumber;
     private String address;
@@ -18,16 +18,8 @@ public class ShopDTO {
     private LocalTime openHour;
     private LocalTime closeHour;
     private String district;
-    private Long userId;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    private Integer userId;
+    
     public String getName() {
         return name;
     }
@@ -84,11 +76,19 @@ public class ShopDTO {
         this.closeHour = closeHour;
     }
 
-    public Long getUserId() {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 }

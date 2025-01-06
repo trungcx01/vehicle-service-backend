@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class Customer extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -28,8 +28,8 @@ public class Customer extends BaseEntity{
     @Size(max = 1000)
     private String address;
 
-    @Column(name = "district", nullable = false)
-    private String district;
+//    @Column(name = "district", nullable = false)
+//    private String district;
 
     @Column(name = "dob")
     private LocalDate dob;
@@ -41,11 +41,11 @@ public class Customer extends BaseEntity{
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -77,13 +77,13 @@ public class Customer extends BaseEntity{
         return address;
     }
 
-    public String getDistrict() {
-        return district;
-    }
-
-    public void setDistrict(String district) {
-        this.district = district;
-    }
+//    public String getDistrict() {
+//        return district;
+//    }
+//
+//    public void setDistrict(String district) {
+//        this.district = district;
+//    }
 
     public void setAddress(String address) {
         this.address = address;

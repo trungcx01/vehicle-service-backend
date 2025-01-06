@@ -25,7 +25,7 @@ public interface CustomerMapper extends EntityMapper<CustomerDTO, Customer>{
     @Mapping(source = "user.id", target = "userId")
     CustomerDTO toDto(Customer entity);
 
-    default Customer fromId(Long id, @Context CustomerRepository customerRepository){
+    default Customer fromId(Integer  id, @Context CustomerRepository customerRepository){
         if (id == null){
            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
            String username = authentication.getName();

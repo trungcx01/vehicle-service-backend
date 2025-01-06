@@ -10,6 +10,6 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface VnpayService {
-    VnpayResponseDTO createPayment(HttpServletRequest request, Double amount, String orderNote);
+    VnpayResponseDTO createPayment(HttpServletRequest request, Long amount, String orderNote);
     PaymentDTO handleVnpayPaymentReturn(HttpServletRequest request,   HttpServletResponse response) throws IOException;
 }

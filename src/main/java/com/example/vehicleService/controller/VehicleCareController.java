@@ -4,6 +4,7 @@ import com.example.vehicleService.dto.ResponseMessage;
 import com.example.vehicleService.dto.VehicleCareDTO;
 import com.example.vehicleService.entity.VehicleCare;
 import com.example.vehicleService.service.VehicleCareService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class VehicleCareController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id){
+    public ResponseEntity<?> getById(@PathVariable Integer id){
         return ResponseEntity.ok(vehicleCareService.getById(id));
     }
 
@@ -42,30 +43,48 @@ public class VehicleCareController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
+    public ResponseEntity<?> delete(@PathVariable Integer id){
         vehicleCareService.delete(id);
         return ResponseEntity.ok(new ResponseMessage("Delete Vehicle care successfully!", LocalDateTime.now()));
     }
 
 //    @DeleteMapping("{id}")
-//    public ResponseEntity<?> adminDelete(@PathVariable Long id){
+//    public ResponseEntity<?> adminDelete(@PathVariable Integer id){
 //        vehicleCareService.delete(id);
 //        return ResponseEntity.ok(new ResponseMessage("Delete Vehicle care successfully!", LocalDateTime.now()));
 //    }
 
     @GetMapping("/shop-{shopId}")
-    public ResponseEntity<?> getByShop(@PathVariable Long shopId){
+    public ResponseEntity<?> getByShop(@PathVariable Integer shopId){
         return ResponseEntity.ok(vehicleCareService.getByShop(shopId));
     }
 
     @GetMapping("/current-shop")
-    public ResponseEntity<?> getByShop(){
-        return ResponseEntity.ok(vehicleCareService.getByShop());
+    public ResponseEntity<?> getByShop(Pageable pageable){
+        return ResponseEntity.ok(vehicleCareService.getByShop(pageable));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchVehicleCare(@RequestParam(value = "name") String name, @RequestParam("district") String district, @RequestParam(value = "priceFrom", required = false) Long priceFrom, @RequestParam(value = "priceTo", required = false) Long priceTo){
+    public ResponseEntity<?> searchVehicleCare(@RequestParam(value = "name") String name, @RequestParam("district") String district, @RequestParam(value = "priceFrom", required = false) Integer priceFrom, @RequestParam(value = "priceTo", required = false) Integer priceTo){
         return ResponseEntity.ok(vehicleCareService.search(name, district, priceFrom, priceTo));
+    }
+
+    @GetMapping("/search-all")
+    public ResponseEntity<Page<VehicleCare>> searchVehicleCares(
+            @RequestParam(value = "searchTerm") String searchTerm,
+            Pageable pageable) {
+
+        Page<VehicleCare> vehicleCaresPage = vehicleCareService.searchVehicleCares(searchTerm, pageable);
+        return ResponseEntity.ok(vehicleCaresPage);
+    }
+
+    @GetMapping("/search-in-shop")
+    public ResponseEntity<Page<VehicleCare>> searchVehicleCaresByShop(
+            @RequestParam(value = "searchTerm") String searchTerm,
+            Pageable pageable) {
+
+        Page<VehicleCare> vehicleCaresPage = vehicleCareService.searchVehicleCaresByShop(searchTerm, pageable);
+        return ResponseEntity.ok(vehicleCaresPage);
     }
 
 }

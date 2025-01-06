@@ -11,12 +11,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface EmergencyRequestService {
-    EmergencyRequest getById(Long id);
+    EmergencyRequest getById(Integer id);
     Page<EmergencyRequest> getAllPagination(Pageable pageable);
     EmergencyRequest save(MultipartFile image1, MultipartFile image2, MultipartFile image3, EmergencyRequestDTO emergencyRequestDTO);
-    void deleteById(Long id);
-    void updateStatus(Status status, Long id);
-    long countByDate(LocalDate date);
-    long countByDateAndCurrentShop(LocalDate date);
+    void deleteById(Integer id);
+    void updateStatus(Status status, Integer id);
+    Integer countByDate(LocalDate date);
+    Integer countByDateAndCurrentShop(LocalDate date);
     List<EmergencyRequest> getByCustomer();
+    long count();
+    long countByCurrentShop();
+    Page<EmergencyRequest> searchEmergencyRequests(String searchTerm, Pageable pageable);
 }

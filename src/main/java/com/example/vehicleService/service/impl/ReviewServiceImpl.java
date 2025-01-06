@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,7 +45,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review getById(Long id) {
+    public Review getById(Integer id) {
         return reviewRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Review!")
         );
@@ -80,11 +81,9 @@ public class ReviewServiceImpl implements ReviewService {
             review.setServiceType(ServiceType.APPOINTMENT);
         }
 
-        // Cập nhật rating của shop
-        Double newRating = currentRate + review.getRate(); // Giả sử review.getRating() là rating của review mới
+        long cntReview = reviewRepository.findByShopId(shop.getId()).size();
+        Double newRating = (currentRate * cntReview + review.getRate()) / (cntReview + 1);
         shop.setRating(newRating);
-
-        // Lưu lại shop sau khi cập nhật rating
         shopRepository.save(shop);
 
         if (image != null) {
@@ -92,14 +91,12 @@ public class ReviewServiceImpl implements ReviewService {
             String url = imageUrl.get("secure_url").toString();
             review.setImageUrl(url);
         }
-
-        // Lưu review
         return reviewRepository.save(review);
     }
 
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         Review review = reviewRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Review!")
         );
@@ -113,17 +110,36 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review findByAppointmentId(Long id) {
+    public Review findByAppointmentId(Integer id) {
         return reviewRepository.findByBaseServiceId(id);
     }
 
     @Override
-    public Review findByProposalId(Long id) {
+    public Review findByProposalId(Integer id) {
         return reviewRepository.findByBaseServiceId(id);
     }
 
     @Override
-    public List<Review> findByShop(Long shopId) {
+    public List<Review> findByShop(Integer shopId) {
         return reviewRepository.findByShopId(shopId);
+    }
+
+    @Override
+    public Page<Review> searchReviews(String searchTerm, Pageable pageable) {
+        return reviewRepository.searchReviews(searchTerm, pageable);
+    }
+
+    @Override
+    public Page<Review> findByCurrentShop(Pageable pageable) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Shop shop = shopRepository.findByUserUsername(username);
+        return reviewRepository.findByShopId(shop.getId(), pageable);
+    }
+
+    @Override
+    public Page<Review> searchReviewsInCurrentShop(String searchTerm, Pageable pageable) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Shop shop = shopRepository.findByUserUsername(username);
+        return reviewRepository.searchReviewsInShop(searchTerm, shop.getId(), pageable);
     }
 }

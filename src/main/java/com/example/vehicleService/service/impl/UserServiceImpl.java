@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @Service
@@ -22,7 +23,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User updateAvatar(MultipartFile image, Long userId) {
+    public User updateAvatar(MultipartFile image, Integer userId) {
         Map avatar =  cloudinaryService.upload(image, "users");
         User user;
         if (userId != null){
@@ -41,12 +42,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Long getUserByMonth(Long month, Long year) {
-        return userRepository.getUserByMonth(month, year);
+    public Integer getUserByDate(LocalDate date) {
+        return userRepository.getUserByDate(date);
     }
 
     @Override
-    public void lockAccount(Long userId) {
+    public void lockAccount(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("Not found user!")
         );
@@ -55,11 +56,16 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void unlockAccount(Long userId) {
+    public void unlockAccount(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("Not found user!")
         );
         user.setLocked(false);
         userRepository.save(user);
+    }
+
+    @Override
+    public long count() {
+        return userRepository.count();
     }
 }

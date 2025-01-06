@@ -19,7 +19,7 @@ public interface ShopMapper extends EntityMapper<ShopDTO, Shop>{
     @Mapping(source = "user.id", target = "userId")
     ShopDTO toDto(Shop entity);
 
-    default Shop fromId(Long id, @Context ShopRepository shopRepository){
+    default Shop fromId(Integer  id, @Context ShopRepository shopRepository){
         if (id == null){
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             return shopRepository.findByUserUsername(username);

@@ -20,7 +20,7 @@ public class NotificationController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id){
+    public ResponseEntity<?> getById(@PathVariable Integer id){
         return ResponseEntity.ok(notificationService.getById(id));
     }
 

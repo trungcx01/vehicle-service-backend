@@ -10,13 +10,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface PaymentService {
-    Payment getById(Long id);
+    Payment getById(Integer id);
     Page<Payment> getAllPagination(Pageable pageable);
     Payment save(PaymentDTO paymentDTO, HttpServletRequest request);
-    void deleteById(Long id);
-//    Payment getPaymentOfRequest(Long id);
-    Payment getPaymentOfAppointment(Long id);
-    Long totalAmountByDateAndCurrentShop(LocalDate date);
-
+    void deleteById(Integer id);
+//    Payment getPaymentOfRequest(Integer id);
+    Payment getPaymentOfAppointment(Integer id);
+    Integer totalAmountByDateAndCurrentShop(LocalDate date);
+    Long getTotalRevenue();
 //    List<Payment> getFinishedByShop();
 }

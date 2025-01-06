@@ -21,7 +21,7 @@ public class Proposal extends BaseService{
     private EmergencyRequest emergencyRequest;
 
     @Column(name = "predict", nullable = false)
-    @Size(max = 10000)
+    @Size(max = 3000)
     private String predict;
 
     @Column(name = "expected_price", nullable = false)

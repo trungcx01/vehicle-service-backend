@@ -27,7 +27,7 @@ public interface EmergencyRequestMapper extends EntityMapper<EmergencyRequestDTO
     @Mapping(source = "customer.id", target = "customerId")
     EmergencyRequestDTO toDto(EmergencyRequest entity);
 
-    default EmergencyRequest fromId(Long id, @Context EmergencyRequestRepository emergencyRequestRepository){
+    default EmergencyRequest fromId(Integer  id, @Context EmergencyRequestRepository emergencyRequestRepository){
         if (id == null){
             return null;
         }
@@ -37,14 +37,14 @@ public interface EmergencyRequestMapper extends EntityMapper<EmergencyRequestDTO
     }
 
 //    @Named("idsToEntitiesProposal")
-//    default Set<Proposal> idsToEntitiesProposal(Set<Long> proposalIds, @Context ProposalRepository proposalRepository){
+//    default Set<Proposal> idsToEntitiesProposal(Set<Integer > proposalIds, @Context ProposalRepository proposalRepository){
 //        return proposalIds.stream().map(p -> proposalRepository.findById(p).orElseThrow(
 //                () -> new EntityNotFoundException("Not found proposal!")
 //        )).collect(Collectors.toSet());
 //    }
 //
 //    @Named("entitiesToIdsProposal")
-//    default Set<Long> entitiesToIdsProposal(Set<Proposal> proposals){
+//    default Set<Integer > entitiesToIdsProposal(Set<Proposal> proposals){
 //        return proposals.stream().map(p -> p.getId()).collect(Collectors.toSet());
 //    }
 }

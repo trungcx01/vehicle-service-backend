@@ -15,7 +15,7 @@ import java.util.Set;
 public class VehicleCare extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -47,11 +47,11 @@ public class VehicleCare extends BaseEntity{
     @JsonIgnore
     private Set<Appointment> appointments = new HashSet<>();
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

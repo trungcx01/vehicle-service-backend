@@ -7,10 +7,11 @@ import org.springframework.data.domain.Pageable;
 
 
 public interface CustomerService {
-    Customer getById(Long id);
+    Customer getById(Integer id);
     Page<Customer> getAllPagination(Pageable pageable);
     Customer save(CustomerDTO customerDTO);
-    void delete(Long id);
+    void delete(Integer id);
     Customer getCurrentCustomer();
     Customer getByPhoneNumber(String phoneNumber);
+    Page<Customer> searchCustomers(String searchTerm, Pageable pageable);
 }

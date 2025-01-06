@@ -39,7 +39,7 @@ public class AdminController {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @PutMapping("/vehicle-care/{id}")
-    public ResponseEntity<?> adminDeleteVehicleCare(@PathVariable Long id, @RequestParam String reason) {
+    public ResponseEntity<?> adminDeleteVehicleCare(@PathVariable Integer id, @RequestParam String reason) {
         VehicleCare vehicleCare = vehicleCareService.getById(id);
         if (vehicleCare == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("VehicleCare not found!", LocalDateTime.now()));
@@ -57,7 +57,7 @@ public class AdminController {
     }
 
     @PutMapping("/review/{id}")
-    public ResponseEntity<?> adminDeleteReview(@PathVariable Long id, @RequestParam String reason) {
+    public ResponseEntity<?> adminDeleteReview(@PathVariable Integer id, @RequestParam String reason) {
         Review review = reviewService.getById(id);
         if (review == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage("Review not found!", LocalDateTime.now()));

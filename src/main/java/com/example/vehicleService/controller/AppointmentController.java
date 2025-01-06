@@ -9,6 +9,7 @@ import com.example.vehicleService.entity.enums.Event;
 import com.example.vehicleService.repository.NotificationRepository;
 import com.example.vehicleService.repository.UserRepository;
 import com.example.vehicleService.service.AppointmentService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -35,7 +36,7 @@ public class AppointmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id){
+    public ResponseEntity<?> getById(@PathVariable int id){
         return ResponseEntity.ok(appointmentService.getById(id));
     }
 
@@ -83,7 +84,7 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
+    public ResponseEntity<?> delete(@PathVariable int id){
         appointmentService.delete(id);
         return ResponseEntity.ok(new ResponseMessage("Delete Appointment successfully!", LocalDateTime.now()));
     }
@@ -94,12 +95,12 @@ public class AppointmentController {
     }
 
     @GetMapping("/shop")
-    public ResponseEntity<?> getByCurrentShop(){
-        return ResponseEntity.ok( appointmentService.getByCurrentShop());
+    public ResponseEntity<?> getByCurrentShop(Pageable pageable){
+        return ResponseEntity.ok( appointmentService.getByCurrentShop(pageable));
     }
 
     @PutMapping("update-status/{id}")
-    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam("status") Status status){
+    public ResponseEntity<?> updateStatus(@PathVariable int id, @RequestParam("status") Status status){
         appointmentService.updateStatus(status, id);
         return ResponseEntity.ok(new ResponseMessage("Cập nhật trạng thái thành công!", LocalDateTime.now()));
     }
@@ -114,5 +115,33 @@ public class AppointmentController {
     public ResponseEntity<?> countByCurrentShopAndDate(@PathVariable String date){
         LocalDate localDate = LocalDate.parse(date);
         return ResponseEntity.ok(appointmentService.countByDateAndCurrentShop(localDate));
+    }
+
+    @GetMapping("count")
+    public ResponseEntity<?> count(){
+        return ResponseEntity.ok(appointmentService.count());
+    }
+
+    @GetMapping("count-by-shop")
+    public ResponseEntity<?> countByCurrentShop(){
+        return ResponseEntity.ok(appointmentService.countByCurrentShop());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<Appointment>> searchAppointments(
+            @RequestParam(value = "searchTerm") String searchTerm,
+            Pageable pageable) {
+
+        Page<Appointment> appointmentsPage = appointmentService.searchAppointments(searchTerm, pageable);
+        return ResponseEntity.ok(appointmentsPage);
+    }
+
+    @GetMapping("/search-in-shop")
+    public ResponseEntity<Page<Appointment>> searchAppointmentsInShop(
+            @RequestParam(value = "searchTerm") String searchTerm,
+            Pageable pageable) {
+
+        Page<Appointment> appointmentsPage = appointmentService.searchAppointmentsInCurrentShop(searchTerm, pageable);
+        return ResponseEntity.ok(appointmentsPage);
     }
 }

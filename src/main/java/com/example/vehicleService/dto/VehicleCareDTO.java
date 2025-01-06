@@ -10,20 +10,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VehicleCareDTO {
     @Null
-    private Long id;
+    private Integer id;
     private String name;
     private String description;
     private Long price;
     private String estimatedDuration ;
     private boolean available = true;
-    private Long shopId;
+    private Integer shopId;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void setShopId(Integer shopId) {
+        this.shopId = shopId;
+    }
+
+    public Integer getShopId() {
+        return shopId;
     }
 
     public String getName() {
@@ -66,12 +74,5 @@ public class VehicleCareDTO {
     public void setAvailable(boolean available) {
         this.available = available;
     }
-
-    public Long getShopId() {
-        return shopId;
-    }
-
-    public void setShopId(Long shopId) {
-        this.shopId = shopId;
-    }
+    
 }

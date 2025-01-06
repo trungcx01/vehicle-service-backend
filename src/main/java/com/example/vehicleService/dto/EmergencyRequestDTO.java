@@ -12,25 +12,18 @@ import java.util.Set;
 @AllArgsConstructor
 public class EmergencyRequestDTO {
     @Null
-    private Long id;
+    private Integer id;
     private String description;
     private String imageDetail;
     private String location;
     private String licensePlate;
     private VehicleType vehicleType;
     private Status requestStatus = Status.PENDING;
-    private Long customerId;
-    private Set<Long> proposalIds;
-    @Null
-    private Long selectedProposalId;
+    private Integer customerId;
+    private Set<Integer> proposalIds;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  
 
     public String getDescription() {
         return description;
@@ -80,27 +73,27 @@ public class EmergencyRequestDTO {
         this.requestStatus = requestStatus;
     }
 
-    public Long getCustomerId() {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Long customerId) {
+    public void setCustomerId(Integer customerId) {
         this.customerId = customerId;
     }
 
-    public Set<Long> getProposalIds() {
+    public Set<Integer> getProposalIds() {
         return proposalIds;
     }
 
-    public void setProposalIds(Set<Long> proposalIds) {
+    public void setProposalIds(Set<Integer> proposalIds) {
         this.proposalIds = proposalIds;
-    }
-
-    public Long getSelectedProposalId() {
-        return selectedProposalId;
-    }
-
-    public void setSelectedProposalId(Long selectedProposalId) {
-        this.selectedProposalId = selectedProposalId;
     }
 }

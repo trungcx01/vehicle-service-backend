@@ -26,18 +26,18 @@ public interface AppointmentMapper extends EntityMapper<AppointmentDTO, Appointm
     AppointmentDTO toDto(Appointment entity);
 
     @Named("toSetVehicleCares")
-    default Set<VehicleCare> toSetVehicleCares(Set<Long> vehicleCareIds, @Context VehicleCareRepository vehicleCareRepository){
+    default Set<VehicleCare> toSetVehicleCares(Set<Integer> vehicleCareIds, @Context VehicleCareRepository vehicleCareRepository){
         return vehicleCareIds.stream().map(
                         id -> vehicleCareRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found Vehicle Care!")))
                 .collect(Collectors.toSet());
     }
 
     @Named("toSetVehicleCareIds")
-    default Set<Long> toSetVehicleCareIds(Set<VehicleCare> vehicleCares){
+    default Set<Integer> toSetVehicleCareIds(Set<VehicleCare> vehicleCares){
         return vehicleCares.stream().map(vehicleCare -> vehicleCare.getId()).collect(Collectors.toSet());
     }
 
-    default Appointment fromId(Long id, @Context AppointmentRepository appointmentRepository){
+    default Appointment fromId(Integer id, @Context AppointmentRepository appointmentRepository){
         if (id == null){
             return null;
         }

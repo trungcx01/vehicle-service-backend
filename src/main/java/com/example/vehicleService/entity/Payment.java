@@ -16,10 +16,10 @@ import lombok.NoArgsConstructor;
 public class Payment extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "amount", nullable = false)
-    private double amount;
+    private Long amount;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
@@ -57,19 +57,19 @@ public class Payment extends BaseEntity{
     //Sử dụng @Valid trong Service
 
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public double getAmount() {
+    public Long getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Long amount) {
         this.amount = amount;
     }
 

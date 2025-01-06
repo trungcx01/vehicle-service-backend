@@ -3,11 +3,14 @@ package com.example.vehicleService.service;
 import com.example.vehicleService.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+
 public interface UserService {
-    User updateAvatar(MultipartFile image, Long userId);
+    User updateAvatar(MultipartFile image, Integer userId);
 
-    Long getUserByMonth(Long month, Long year);
+    Integer getUserByDate(LocalDate date);
 
-    void lockAccount(Long userId);
-    void unlockAccount(Long userId);
+    void lockAccount(Integer userId);
+    void unlockAccount(Integer userId);
+    long count();
 }

@@ -11,10 +11,10 @@ public interface NotificationService {
 //    void send(String channel, String message);
 //    void sendToUser(String userId, String channel, String message);
     Page<Notification> getAllPagination(Pageable pageable);
-    Notification getById(Long id);
+    Notification getById(Integer id);
 //    List<Notification> getUnreadNotificationOfCurrentUser();
     List<Notification> getByCurrentUser();
     void readAllNotificationsOfCurrentUser();
-    void readNotification(Long notificationId);
-    void publishLiveTracking(String message, Long proposalId);
+    void readNotification(Integer notificationId);
+    void publishLiveTracking(String message, Integer proposalId);
 }

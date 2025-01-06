@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface PaymentRepository extends JpaRepository<Payment, Long> {
+public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     Payment findByTransactionReference(String transactionReference);
-    Payment findByBaseServiceId(Long id);
+    Payment findByBaseServiceId(Integer id);
 
     @Query(value = "SELECT SUM(p.amount)\n" +
             "FROM payment p\n" +
@@ -21,7 +21,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             "  AND p.payment_status = 'FINISHED'\n" +
             "  AND s.id = ?2\n" +
             "  AND p.service_type = 'EMERGENCY_REQUEST';\n", nativeQuery = true)
-    Long totalAmountForEmergencyRequestByDateAndShop(LocalDate date, Long shopId);
+    Integer totalAmountForEmergencyRequestByDateAndShop(LocalDate date, Integer shopId);
 
 
     @Query(value = "SELECT SUM(p.amount)\n" +
@@ -35,9 +35,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             "  AND p.payment_status = 'FINISHED'\n" +
             "  AND s.id = ?2\n" +
             "  AND p.service_type = 'APPOINTMENT';\n", nativeQuery = true)
-    Long totalAmountForAppointmentByDateAndShop(LocalDate date, Long shopId);
+    Integer totalAmountForAppointmentByDateAndShop(LocalDate date, Integer shopId);
 
-//    Payment findByProposalEmergencyRequestId(Long emergencyRequestId);
-//    List<Payment> findByAppointmentVehicleCaresShopIdOrProposalShopIdAndPaymentStatusEquals(Long appointmentVehicleCaresShopId, Long proposalShopId, Status status);
+    @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.status = 'FINISHED'")
+    Long getTotalRevenue();
+//    Payment findByProposalEmergencyRequestId(Integer emergencyRequestId);
+//    List<Payment> findByAppointmentVehicleCaresShopIdOrProposalShopIdAndPaymentStatusEquals(Integer appointmentVehicleCaresShopId, Integer proposalShopId, Status status);
 
 }

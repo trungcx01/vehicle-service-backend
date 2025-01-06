@@ -41,7 +41,7 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
     }
 
     @Override
-    public EmergencyRequest getById(Long id) {
+    public EmergencyRequest getById(Integer id) {
         return emergencyRequestRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Emergency Request!")
         );
@@ -74,7 +74,7 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         EmergencyRequest emergencyRequest = emergencyRequestRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Emergency Request!")
         );
@@ -82,7 +82,7 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
     }
 
     @Override
-    public void updateStatus(Status status, Long id) {
+    public void updateStatus(Status status, Integer id) {
         EmergencyRequest emergencyRequest = emergencyRequestRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Emergency request!")
         );
@@ -91,12 +91,12 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
     }
 
     @Override
-    public long countByDate(LocalDate date) {
+    public Integer countByDate(LocalDate date) {
         return emergencyRequestRepository.countByDate(date);
     }
 
     @Override
-    public long countByDateAndCurrentShop(LocalDate date) {
+    public Integer countByDateAndCurrentShop(LocalDate date) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Shop shop = shopRepository.findByUserUsername(username);
         return emergencyRequestRepository.countByDateAndCurrentShop(date, shop.getId());
@@ -106,5 +106,22 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
     public List<EmergencyRequest> getByCustomer() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return emergencyRequestRepository.findByCustomerUserUsername(username);
+    }
+
+    @Override
+    public long count() {
+        return emergencyRequestRepository.count();
+    }
+
+    @Override
+    public long countByCurrentShop() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Shop shop = shopRepository.findByUserUsername(username);
+        return emergencyRequestRepository.countByCurrentShop(shop.getId());
+    }
+
+    @Override
+    public Page<EmergencyRequest> searchEmergencyRequests(String searchTerm, Pageable pageable) {
+        return emergencyRequestRepository.searchEmergencyRequests(searchTerm, pageable);
     }
 }

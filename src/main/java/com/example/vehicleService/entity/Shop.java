@@ -19,7 +19,7 @@ import java.util.Set;
 public class Shop extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -45,6 +45,12 @@ public class Shop extends BaseEntity{
     @Column(name = "rating")
     private Double rating = 0d;
 
+    @Column(name = "cover_image", nullable = false)
+    private String coverImage;
+
+    @Column(name = "revenue")
+    private Long revenue;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -60,11 +66,11 @@ public class Shop extends BaseEntity{
     @JsonIgnore
     private Set<Proposal> proposals = new HashSet<>();
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -78,6 +84,22 @@ public class Shop extends BaseEntity{
 
     public String getAddress() {
         return address;
+    }
+
+    public Long getRevenue() {
+        return revenue;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    public void setRevenue(Long revenue) {
+        this.revenue = revenue;
     }
 
     public boolean isDeleted() {

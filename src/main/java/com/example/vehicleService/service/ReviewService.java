@@ -11,12 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ReviewService {
-    Review getById(Long id);
+    Review getById(Integer id);
     Page<Review> getAllPagination(Pageable pageable);
     Review save(ReviewDTO reviewDTO, MultipartFile image);
-    void delete(Long id);
+    void delete(Integer id);
     List<Review> findTop8ByOrderByCreatedAtDesc();
-    Review findByAppointmentId(Long id);
-    Review findByProposalId(Long id);
-    List<Review> findByShop(Long shopId);
+    Review findByAppointmentId(Integer id);
+    Review findByProposalId(Integer id);
+    List<Review> findByShop(Integer shopId);
+
+    Page<Review> findByCurrentShop(Pageable pageable);
+    Page<Review> searchReviews(String searchTerm, Pageable pageable);
+    Page<Review> searchReviewsInCurrentShop(String searchTerm, Pageable pageable);
 }

@@ -16,7 +16,7 @@ public interface UserMapper extends EntityMapper<UserRegisterDTO, User>{
     UserRegisterDTO toDto(User user);
     User toEntity(UserRegisterDTO userRegisterDTO);
 
-    default User fromId(Long id, @Context UserRepository userRepository) {
+    default User fromId(Integer  id, @Context UserRepository userRepository) {
         if (id == null){
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             return userRepository.findByUsername(authentication.getName()).orElse(null);

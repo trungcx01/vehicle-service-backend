@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Review extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "description")
     private String description;
@@ -40,11 +40,11 @@ public class Review extends BaseEntity{
     @JoinColumn(name = "base_service_id", nullable = false)
     private BaseService baseService;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

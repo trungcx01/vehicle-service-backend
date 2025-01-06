@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,7 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment getById(Long id) {
+    public Payment getById(Integer id) {
         return paymentRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Payment!")
         );
@@ -53,14 +54,26 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment save(PaymentDTO paymentDTO, HttpServletRequest request) {
+        Payment payment1 = null;
+        if (paymentDTO.getProposalId() != null){
+             payment1 = paymentRepository.findByBaseServiceId(paymentDTO.getProposalId());
+        }else if(paymentDTO.getAppointmentId() != null){
+             payment1 = paymentRepository.findByBaseServiceId(paymentDTO.getAppointmentId());
+        }
+        if (payment1 != null && !payment1.getStatus().equals(Status.FINISHED)){
+            paymentRepository.delete(payment1);
+        }
+
         Payment payment = paymentMapper.toEntity(paymentDTO);
-        double amount_ = 0;
+        long amount_ = 0;
+        Shop shop = null;
         if (paymentDTO.getAppointmentId() == null){
             payment.setServiceType(ServiceType.EMERGENCY_REQUEST);
-            amount_ = 100000;
             Proposal proposal = proposalRepository.findById(paymentDTO.getProposalId()).orElseThrow(
                     () -> new EntityNotFoundException("Not found proposal!")
             );
+            amount_ = proposal.getExpectedPrice();
+            shop = proposal.getShop();
             payment.setBaseService(proposal);
         }else{
             payment.setServiceType(ServiceType.APPOINTMENT);
@@ -70,6 +83,7 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setBaseService(appointment);
             for (VehicleCare vehicleCare : appointment.getVehicleCares()){
                 amount_ += vehicleCare.getPrice();
+                shop = vehicleCare.getShop();
             }
         }
         payment.setAmount(amount_);
@@ -82,12 +96,17 @@ public class PaymentServiceImpl implements PaymentService {
                             : "Proposal cho id: " + paymentDTO.getProposalId()));
             payment.setPayLink(res.getPayLink());
             payment.setTransactionReference(res.getVnp_TxnRef());
-        } else payment.setStatus(Status.FINISHED);
+        } else {
+            payment.setStatus(Status.FINISHED);
+            if (shop != null){
+                shop.setRevenue(shop.getRevenue() != null ? shop.getRevenue() + amount_ : shop.getRevenue());
+            }
+        }
         return paymentRepository.save(payment);
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         Payment payment = paymentRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Payment!")
         );
@@ -95,12 +114,12 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
 //    @Override
-//    public Payment getPaymentOfRequest(Long id) {
+//    public Payment getPaymentOfRequest(Integer id) {
 //        return paymentRepository.findByProposalEmergencyRequestId(id);
 //    }
 
     @Override
-    public Payment getPaymentOfAppointment(Long id) {
+    public Payment getPaymentOfAppointment(Integer id) {
         return paymentRepository.findByBaseServiceId(id);
     }
 
@@ -108,20 +127,24 @@ public class PaymentServiceImpl implements PaymentService {
 //    public List<Payment> getFinishedByShop() {
 //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 //        Shop shop = shopRepository.findByUserUsername(username);
-//        Long shopId = shop.getId();
+//        Integer shopId = shop.getId();
 //        return paymentRepository.findByAppointmentVehicleCaresShopIdOrProposalShopIdAndPaymentStatusEquals(shopId, shopId, Status.FINISHED);
 //    }
 
 
     @Override
-    public Long totalAmountByDateAndCurrentShop(LocalDate date) {
+    public Integer totalAmountByDateAndCurrentShop(LocalDate date) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Shop shop = shopRepository.findByUserUsername(username);
 
-        Long appointmentAmount = Optional.ofNullable(paymentRepository.totalAmountForAppointmentByDateAndShop(date, shop.getId())).orElse(0L);
-        Long emergencyRequestAmount = Optional.ofNullable(paymentRepository.totalAmountForEmergencyRequestByDateAndShop(date, shop.getId())).orElse(0L);
+        Integer appointmentAmount = Optional.ofNullable(paymentRepository.totalAmountForAppointmentByDateAndShop(date, shop.getId())).orElse(0);
+        Integer emergencyRequestAmount = Optional.ofNullable(paymentRepository.totalAmountForEmergencyRequestByDateAndShop(date, shop.getId())).orElse(0);
 
         return appointmentAmount + emergencyRequestAmount;
     }
 
+    @Override
+    public Long getTotalRevenue() {
+        return paymentRepository.getTotalRevenue();
+    }
 }

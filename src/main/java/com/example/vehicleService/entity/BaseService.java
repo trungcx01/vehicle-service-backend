@@ -15,7 +15,7 @@ public abstract class BaseService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private LocalDateTime createdAt;
 
@@ -44,11 +44,11 @@ public abstract class BaseService {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

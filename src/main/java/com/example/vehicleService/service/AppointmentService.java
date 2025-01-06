@@ -10,13 +10,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AppointmentService {
-    Appointment getById(Long id);
+    Appointment getById(Integer id);
     Page<Appointment> getAllPagination(Pageable pageable);
     Appointment save(AppointmentDTO appointmentDTO);
-    void delete(Long id);
+    void delete(Integer id);
     List<Appointment> getByCurrentCustomer();
-    List<Appointment> getByCurrentShop();
-    void updateStatus(Status status, Long appointmentId);
-    long countByDate(LocalDate date);
-    long countByDateAndCurrentShop(LocalDate date);
+    Page<Appointment> getByCurrentShop(Pageable pageable);
+    void updateStatus(Status status, Integer appointmentId);
+    Integer countByDate(LocalDate date);
+    Integer countByDateAndCurrentShop(LocalDate date);
+    long count();
+    long countByCurrentShop();
+
+    Page<Appointment> searchAppointments(String searchTerm, Pageable pageable);
+    Page<Appointment> searchAppointmentsInCurrentShop(String searchTerm, Pageable pageable);
 }

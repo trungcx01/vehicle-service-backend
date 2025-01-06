@@ -45,10 +45,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer getById(Long id) {
+    public Customer getById(Integer id) {
         return customerRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found customer!")
         );
+    }
+
+    @Override
+    public Page<Customer> searchCustomers(String searchTerm, Pageable pageable) {
+        return customerRepository.searchCustomers(searchTerm, pageable);
     }
 
     @Override
@@ -57,7 +62,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         Customer customer = customerRepository.findById(id).orElseThrow(
                 ()-> new EntityNotFoundException("Not found Customer!")
         );

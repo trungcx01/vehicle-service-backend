@@ -9,12 +9,12 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ProposalService {
-    Proposal getById(Long id);
+    Proposal getById(Integer id);
     Page<Proposal> getAllPagination(Pageable pageable);
     Proposal save(ProposalDTO proposalDTO);
-    void deleteById(Long id);
-    List<Proposal> getByEmergencyRequest(Long emergencyRequestId);
-    Proposal acceptProposal(Long proposalId);
-    Proposal checkSendProposal(Long emergencyRequestId);
-    void updateStatus(Status status, Long id);
+    void deleteById(Integer id);
+    List<Proposal> getByEmergencyRequest(Integer emergencyRequestId);
+    Proposal acceptProposal(Integer proposalId);
+    Proposal checkSendProposal(Integer emergencyRequestId);
+    void updateStatus(Status status, Integer id);
 }

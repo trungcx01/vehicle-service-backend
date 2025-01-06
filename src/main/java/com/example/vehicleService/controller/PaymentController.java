@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -35,11 +36,12 @@ public class PaymentController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id){
+    public ResponseEntity<?> getById(@PathVariable Integer id){
         return ResponseEntity.ok(paymentService.getById(id));
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<?> add(@RequestBody PaymentDTO paymentDTO, HttpServletRequest request){
         return ResponseEntity.ok(paymentService.save(paymentDTO, request));
     }
@@ -50,7 +52,7 @@ public class PaymentController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
+    public ResponseEntity<?> delete(@PathVariable Integer id){
         paymentService.deleteById(id);
         return ResponseEntity.ok(new ResponseMessage("Delete Payment successfully!", LocalDateTime.now()));
     }
@@ -61,7 +63,7 @@ public class PaymentController {
     }
 
     @GetMapping("/appointment/{id}")
-    public ResponseEntity<?> getPaymentOfAppointment(@PathVariable("id") Long id){
+    public ResponseEntity<?> getPaymentOfAppointment(@PathVariable("id") Integer id){
         return ResponseEntity.ok(paymentService.getPaymentOfAppointment(id));
     }
 
@@ -73,7 +75,7 @@ public class PaymentController {
 
 //
 //    @GetMapping("/emergency-request/{id}")
-//    public ResponseEntity<?> getPaymentOfEmergencyRequest(@PathVariable("id") Long id){
+//    public ResponseEntity<?> getPaymentOfEmergencyRequest(@PathVariable("id") Integer id){
 //        return ResponseEntity.ok(paymentService.getPaymentOfRequest(id));
 //    }
 //
@@ -90,4 +92,9 @@ public class PaymentController {
 //                .sum();
 //        return ResponseEntity.ok(totalTurnOver);
 //    }
+
+    @GetMapping("/get_total_revenue")
+    public ResponseEntity<?> count(){
+        return ResponseEntity.ok(paymentService.getTotalRevenue());
+    }
 }

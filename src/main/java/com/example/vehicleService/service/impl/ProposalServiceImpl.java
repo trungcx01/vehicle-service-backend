@@ -36,7 +36,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public Proposal getById(Long id) {
+    public Proposal getById(Integer id) {
         return proposalRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Proposal!")
         );
@@ -54,7 +54,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         Proposal proposal = proposalRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Proposal!")
         );
@@ -62,13 +62,13 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public List<Proposal> getByEmergencyRequest(Long emergencyRequestId) {
+    public List<Proposal> getByEmergencyRequest(Integer emergencyRequestId) {
         return proposalRepository.findByEmergencyRequestId(emergencyRequestId);
     }
 
     @Override
     @Transactional
-    public Proposal acceptProposal(Long proposalId) {
+    public Proposal acceptProposal(Integer proposalId) {
         Proposal proposal = proposalRepository.findById(proposalId).orElseThrow(
                 () -> new EntityNotFoundException("Not Found Proposal!")
         );
@@ -99,7 +99,7 @@ public class ProposalServiceImpl implements ProposalService {
 
 
     @Override
-    public Proposal checkSendProposal(Long emergencyRequestId) {
+    public Proposal checkSendProposal(Integer emergencyRequestId) {
         EmergencyRequest emergencyRequest = emergencyRequestRepository.findById(emergencyRequestId).orElseThrow(
                 () -> new EntityNotFoundException("Not found ER")
         );
@@ -112,7 +112,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public void updateStatus(Status status, Long id) {
+    public void updateStatus(Status status, Integer id) {
         Proposal proposal = proposalRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found proposal!")
         );

@@ -23,7 +23,7 @@ import lombok.Setter;
 public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "username", nullable = false, unique = true)
     @NotBlank(message = "Username is mandatory")
@@ -41,7 +41,7 @@ public class User extends BaseEntity{
     private String email;
 
     @Column(name = "image_url")
-    @Size(max = 1000, message = "Image URL should not exceed 1000 characters")
+    @Size(max = 200, message = "Image URL should not exceed 1000 characters")
     private String imageUrl;
 
     @Column(name = "activated", nullable = false)
@@ -58,8 +58,8 @@ public class User extends BaseEntity{
     @Column(name = "reset_date")
     private LocalDateTime resetDate = null;
 
-    @Column(name = "is_locked", nullable = false)
-    private boolean isLocked = false;
+    @Column(name = "locked", nullable = false)
+    private boolean locked = false;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -73,11 +73,11 @@ public class User extends BaseEntity{
     @JsonIgnore
     private Set<Notification> notifications = new HashSet<>();
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -146,11 +146,11 @@ public class User extends BaseEntity{
     }
 
     public boolean isLocked() {
-        return isLocked;
+        return locked;
     }
 
     public void setLocked(boolean locked) {
-        isLocked = locked;
+        this.locked = locked;
     }
 
     public Set<Role> getRoles() {

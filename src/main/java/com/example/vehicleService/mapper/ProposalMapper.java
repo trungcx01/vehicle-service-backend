@@ -23,7 +23,7 @@ public interface ProposalMapper extends EntityMapper<ProposalDTO, Proposal> {
     @Mapping(source = "emergencyRequest.id", target = "emergencyRequestId")
     ProposalDTO toDto(Proposal entity);
 
-    default Proposal fromId(Long id, @Context ProposalRepository proposalRepository){
+    default Proposal fromId(Integer  id, @Context ProposalRepository proposalRepository){
         if (id == null){
             return null;
 //            throw new BlogAPIException(HttpStatus.NOT_FOUND, "Please fill in proposal id!");

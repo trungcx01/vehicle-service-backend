@@ -11,9 +11,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {})
 public interface PaymentMapper extends EntityMapper<PaymentDTO, Payment>{
-
     Payment toEntity(PaymentDTO dto);
-
-
     PaymentDTO toDto(Payment entity);
 }

@@ -32,13 +32,13 @@ public class JwtTokenProvider {
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationTime);
 
-//        Collection<? extends GrantedAuthority> roles = authentication.getAuthorities();
-//        List<String> roleList = roles.stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.toList());
+        Collection<? extends GrantedAuthority> roles = authentication.getAuthorities();
+        List<String> roleList = roles.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
         return Jwts.builder()
                 .subject(username)
-//                .claim("roles", roleList)
+                .claim("roles", roleList)
                 .issuedAt(currentDate)
                 .expiration(expireDate)
                 .signWith(key())
