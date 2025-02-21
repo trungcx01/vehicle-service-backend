@@ -17,7 +17,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     Review findByBaseServiceId(Integer id);
 
-    @Query(value = "SELECT r.* FROM review r \n" +
+    @Query(value = "SELECT DISTINCT r.* FROM review r \n" +
             "JOIN base_service bs ON r.base_service_id = bs.id \n" +
             "LEFT JOIN appointment a ON a.id = bs.id \n" +
             "LEFT JOIN appointment_vehicle_care avc ON avc.appointment_id = a.id \n" +
@@ -27,7 +27,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findByShopId(Integer shopId);
 
     @Query(value = """
-    SELECT r.* 
+    SELECT DISTINCT r.* 
     FROM review r
     JOIN base_service bs ON r.base_service_id = bs.id
     LEFT JOIN appointment a ON a.id = bs.id
@@ -36,7 +36,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     LEFT JOIN proposal p ON p.id = bs.id
     WHERE (vc.shop_id = :shopId OR p.shop_id = :shopId)
 """, countQuery = """
-    SELECT COUNT(*) 
+    SELECT DISTINCT COUNT(*) 
     FROM review r
     JOIN base_service bs ON r.base_service_id = bs.id
     LEFT JOIN appointment a ON a.id = bs.id

@@ -48,15 +48,16 @@ public class VehicleCareController {
         return ResponseEntity.ok(new ResponseMessage("Delete Vehicle care successfully!", LocalDateTime.now()));
     }
 
-//    @DeleteMapping("{id}")
-//    public ResponseEntity<?> adminDelete(@PathVariable Integer id){
-//        vehicleCareService.delete(id);
-//        return ResponseEntity.ok(new ResponseMessage("Delete Vehicle care successfully!", LocalDateTime.now()));
-//    }
 
-    @GetMapping("/shop-{shopId}")
+
+    @GetMapping("/shop/{shopId}")
     public ResponseEntity<?> getByShop(@PathVariable Integer shopId){
         return ResponseEntity.ok(vehicleCareService.getByShop(shopId));
+    }
+
+    @GetMapping("/shop/{shopId}/available")
+    public ResponseEntity<?> getByShopAndAvailable(@PathVariable Integer shopId){
+        return ResponseEntity.ok(vehicleCareService.getByShopAndAvailable(shopId));
     }
 
     @GetMapping("/current-shop")

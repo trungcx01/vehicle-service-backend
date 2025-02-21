@@ -16,6 +16,7 @@ public interface VehicleCareService {
     VehicleCare save(VehicleCareDTO vehicleCareDTO, MultipartFile image);
     void delete(Integer id);
     List<VehicleCare> getByShop(Integer shopId);
+    List<VehicleCare> getByShopAndAvailable(Integer shopId);
     Page<VehicleCare> getByShop(Pageable pageable);
     List<VehicleCare> search(String name, String district, Integer priceFrom, Integer priceTo);
     Page<VehicleCare> searchVehicleCares(String searchTerm, Pageable pageable);

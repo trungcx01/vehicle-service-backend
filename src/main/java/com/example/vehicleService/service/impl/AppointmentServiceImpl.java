@@ -2,23 +2,28 @@ package com.example.vehicleService.service.impl;
 
 import com.example.vehicleService.dto.AppointmentDTO;
 import com.example.vehicleService.entity.Appointment;
+import com.example.vehicleService.entity.Notification;
 import com.example.vehicleService.entity.Shop;
+import com.example.vehicleService.entity.VehicleCare;
 import com.example.vehicleService.entity.enums.Status;
+import com.example.vehicleService.exception.BlogAPIException;
 import com.example.vehicleService.mapper.AppointmentMapper;
-import com.example.vehicleService.repository.AppointmentRepository;
-import com.example.vehicleService.repository.CustomerRepository;
-import com.example.vehicleService.repository.ShopRepository;
-import com.example.vehicleService.repository.VehicleCareRepository;
+import com.example.vehicleService.repository.*;
 import com.example.vehicleService.service.AppointmentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
@@ -27,13 +32,17 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final VehicleCareRepository vehicleCareRepository;
     private final ShopRepository shopRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final NotificationRepository notificationRepository;
 
-    public AppointmentServiceImpl(CustomerRepository customerRepository, AppointmentMapper appointmentMapper, AppointmentRepository appointmentRepository, VehicleCareRepository vehicleCareRepository, ShopRepository shopRepository) {
+    public AppointmentServiceImpl(CustomerRepository customerRepository, AppointmentMapper appointmentMapper, AppointmentRepository appointmentRepository, VehicleCareRepository vehicleCareRepository, ShopRepository shopRepository, SimpMessagingTemplate simpMessagingTemplate, NotificationRepository notificationRepository) {
         this.customerRepository = customerRepository;
         this.appointmentMapper = appointmentMapper;
         this.appointmentRepository = appointmentRepository;
         this.vehicleCareRepository = vehicleCareRepository;
         this.shopRepository = shopRepository;
+        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.notificationRepository = notificationRepository;
     }
 
     @Override
@@ -50,8 +59,25 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Appointment save(AppointmentDTO appointmentDTO) {
-        Appointment appointment = appointmentMapper.toEntity(appointmentDTO, customerRepository, vehicleCareRepository);
         LocalDateTime dateAndTime = appointmentDTO.getDate().atTime(appointmentDTO.getTime());
+        LocalDateTime now = LocalDateTime.now();
+        if (dateAndTime.isBefore(now)) {
+            throw new BlogAPIException(
+                    HttpStatus.BAD_REQUEST,   String.format("Ngày và giờ hẹn phải lớn hơn thời điểm hiện tại."));
+        }
+
+        VehicleCare vehicleCare = vehicleCareRepository.findById(appointmentDTO.getVehicleCareIds().stream().toList().get(0)).orElseThrow(
+                () -> new EntityNotFoundException("Not found Vehicle Care!")
+        );
+        Shop shop = vehicleCare.getShop();
+        LocalTime openHour = shop.getOpenHour();
+        LocalTime closeHour = shop.getCloseHour();
+
+        if (appointmentDTO.getTime().isBefore(openHour) || appointmentDTO.getTime().isAfter(closeHour)) {
+            throw new BlogAPIException(
+                  HttpStatus.BAD_REQUEST,   String.format("Thời gian hẹn phải nằm trong khoảng %s - %s.", openHour, closeHour));
+        }
+        Appointment appointment = appointmentMapper.toEntity(appointmentDTO, customerRepository, vehicleCareRepository);
         appointment.setDateAndTime(dateAndTime);
         return appointmentRepository.save(appointment);
     }
@@ -77,11 +103,27 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    @Transactional
     public void updateStatus(Status status, Integer appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(
                 () -> new EntityNotFoundException("Not found Appointment!")
         );
         appointment.setStatus(status);
+        String message = null;
+        if (status.equals(Status.ACCEPTED)) {
+            message = "Lịch hẹn của bạn đã được chấp nhận";
+            Notification notification = new Notification();
+            notification.setMessage(message);
+            notification.setUsers(Set.of(appointment.getCustomer().getUser()));
+            notificationRepository.save(notification);
+        }else if (status.equals(Status.CANCELED)){
+            message = "Lịch hẹn của bạn đã bị từ chối";
+            Notification notification = new Notification();
+            notification.setMessage(message);
+            notification.setUsers(Set.of(appointment.getCustomer().getUser()));
+            notificationRepository.save(notification);
+        }
+        simpMessagingTemplate.convertAndSendToUser(appointment.getCustomer().getUser().getUsername(), "queue/notifications", "NOTIFICATION: " + message);
         appointmentRepository.save(appointment);
     }
 

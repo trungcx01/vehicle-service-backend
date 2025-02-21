@@ -1,6 +1,7 @@
 package com.example.vehicleService.controller;
 
 import com.example.vehicleService.dto.AppointmentDTO;
+import com.example.vehicleService.dto.EmailDetail;
 import com.example.vehicleService.dto.ResponseMessage;
 import com.example.vehicleService.entity.*;
 import com.example.vehicleService.entity.enums.NotificationStatus;
@@ -9,6 +10,7 @@ import com.example.vehicleService.entity.enums.Event;
 import com.example.vehicleService.repository.NotificationRepository;
 import com.example.vehicleService.repository.UserRepository;
 import com.example.vehicleService.service.AppointmentService;
+import com.example.vehicleService.service.MailService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +29,14 @@ public class AppointmentController {
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final UserRepository userRepository;
+    private final MailService mailService;
 
-    public AppointmentController(AppointmentService appointmentService, NotificationRepository notificationRepository, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository) {
+    public AppointmentController(AppointmentService appointmentService, NotificationRepository notificationRepository, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository, MailService mailService) {
         this.appointmentService = appointmentService;
         this.notificationRepository = notificationRepository;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.userRepository = userRepository;
+        this.mailService = mailService;
     }
 
     @GetMapping("/{id}")
@@ -59,6 +63,8 @@ public class AppointmentController {
 //        notification.setEventType(Event.APPOINTMENT);
 //        notification.setEventId(appointment.getId());
         notification.setMessage(message);
+//        mailService.sendTextMail(new EmailDetail(shop.getUser().getEmail(),
+//                "Thông báo có lịch hẹn mới", message));
 
         // Lấy đối tượng User từ DB để tránh trạng thái Detached
         User shopUser = userRepository.findById(shop.getUser().getId())

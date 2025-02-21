@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -57,6 +58,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public Review save(ReviewDTO reviewDTO, MultipartFile image) {
         Review review = reviewMapper.toEntity(reviewDTO, customerRepository);
         Double currentRate = 0d;
@@ -82,7 +84,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         long cntReview = reviewRepository.findByShopId(shop.getId()).size();
-        Double newRating = (currentRate * cntReview + review.getRate()) / (cntReview + 1);
+        Double newRating = Math.round((currentRate * cntReview + review.getRate()) / (cntReview + 1) * 10.0) / 10.0;
         shop.setRating(newRating);
         shopRepository.save(shop);
 
@@ -95,12 +97,25 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
 
+    @Transactional
     @Override
     public void delete(Integer id) {
         Review review = reviewRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Not found Review!")
         );
+        Shop shop = null;
+        if (review.getServiceType().equals("APPOINTMENT")){
+            Appointment appointment = (Appointment) review.getBaseService();
+            List<VehicleCare> vehicleCares = appointment.getVehicleCares().stream().collect(Collectors.toList());
+            shop = vehicleCares.get(0).getShop();
+        }else{
+            Proposal proposal = (Proposal) review.getBaseService();
+            shop = proposal.getShop();
+        }
+        long cntReview = reviewRepository.findByShopId(shop.getId()).size();
+        shop.setRating(Math.round((shop.getRating() * cntReview - review.getRate()) / (cntReview - 1) * 10.0) / 10.0);
         review.setDeleted(true);
+        shopRepository.save(shop);
         reviewRepository.save(review);
     }
 

@@ -1,5 +1,6 @@
 package com.example.vehicleService.controller;
 
+import com.example.vehicleService.dto.EmailDetail;
 import com.example.vehicleService.dto.EmergencyRequestDTO;
 import com.example.vehicleService.dto.ResponseMessage;
 import com.example.vehicleService.entity.EmergencyRequest;
@@ -7,8 +8,7 @@ import com.example.vehicleService.entity.Shop;
 import com.example.vehicleService.entity.enums.Status;
 import com.example.vehicleService.repository.ShopRepository;
 import com.example.vehicleService.service.EmergencyRequestService;
-import com.example.vehicleService.service.ShopService;
-import com.example.vehicleService.service.impl.SmsService;
+import com.example.vehicleService.service.MailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,15 +28,15 @@ public class EmergencyRequestController {
     private final EmergencyRequestService emergencyRequestService;
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final SmsService smsService;
     private final ShopRepository shopRepository;
+    private final MailService mailService;
 
-    public EmergencyRequestController(EmergencyRequestService emergencyRequestService, ObjectMapper objectMapper, SimpMessagingTemplate simpMessagingTemplate, SmsService smsService, ShopRepository shopRepository) {
+    public EmergencyRequestController(EmergencyRequestService emergencyRequestService, ObjectMapper objectMapper, SimpMessagingTemplate simpMessagingTemplate, ShopRepository shopRepository, MailService mailService) {
         this.emergencyRequestService = emergencyRequestService;
         this.objectMapper = objectMapper;
         this.simpMessagingTemplate = simpMessagingTemplate;
-        this.smsService = smsService;
         this.shopRepository = shopRepository;
+        this.mailService = mailService;
     }
 
     @GetMapping
@@ -53,22 +52,16 @@ public class EmergencyRequestController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> add(@RequestPart(value = "image1") MultipartFile image1, @RequestPart(value = "image2", required = false) MultipartFile image2, @RequestPart(value = "image3", required = false) MultipartFile image3, @RequestPart EmergencyRequestDTO emergencyRequestDTO) {
         EmergencyRequest request = emergencyRequestService.save(image1, image2, image3, emergencyRequestDTO);
-//        redisPubSubService.publishMessage("emergency-request",  "EMERGENCY_REQUEST: " + request.getId());
-//        List<Shop> shopList = shopRepository.findAll();
-//        String[] phoneList =  new String[shopList.size()];
-//        int i = 0;
-//        for (Shop x : shopList){
-//            phoneList[i++] = x.getPhoneNumber();
+        List<Shop> shops = shopRepository.findAll();
+//        for (Shop s : shops){
+//            mailService.sendTextMail(new EmailDetail(s.getUser().getEmail(),
+//                    "Có yêu cầu cứu trợ khẩn cấp mới", ""));
 //        }
-//        smsService.sendBulkSms(phoneList, "Có cứu trợ khẩn cấp mới. Vào hệ thống để xem ngay!");
+
         simpMessagingTemplate.convertAndSend("/topic/emergency-request", "EMERGENCY_REQUEST: " + request.getId());
         return ResponseEntity.ok(request);
     }
 
-//    @PutMapping
-//    public ResponseEntity<?> update(@Valid @RequestBody EmergencyRequestDTO emergencyRequestDTO){
-//        return ResponseEntity.ok(emergencyRequestService.save(emergencyRequestDTO));
-//    }
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id){

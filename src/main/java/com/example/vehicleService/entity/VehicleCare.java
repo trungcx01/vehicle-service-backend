@@ -23,7 +23,7 @@ public class VehicleCare extends BaseEntity{
     @Column(name = "description")
     private String description;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "price")
     private Long price;
 
     @Column(name = "estimated_duration ", nullable = false)

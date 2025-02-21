@@ -13,6 +13,7 @@ import java.util.List;
 public interface VehicleCareRepository extends JpaRepository<VehicleCare, Integer> {
     Page<VehicleCare> findByShop(Shop shop, Pageable pageable);
     List<VehicleCare> findByShop(Shop shop);
+    List<VehicleCare> findByAvailableIsTrueAndShop(Shop shop);
 
     @Query(value = "SELECT vc.* FROM vehicle_care vc " +
             "JOIN shop s ON vc.shop_id = s.id " +

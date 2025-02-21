@@ -1,6 +1,7 @@
 package com.example.vehicleService.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.crypto.Mac;
@@ -16,8 +17,10 @@ import java.util.*;
 public class VnpayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String vnp_ReturnUrl = "http://localhost:8080/api/payments/vnpay/return";
-    public static String vnp_TmnCode = "362E0GVS";
-    public static String secretKey = "NQNJAYBKVY6W4G9WEK5CZIJJTONJ12I0";
+    @Value("${vnp_TmnCode}")
+    public static String vnp_TmnCode;
+    @Value("${secretKey}")
+    public static String secretKey;
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
     public static String md5(String message) {

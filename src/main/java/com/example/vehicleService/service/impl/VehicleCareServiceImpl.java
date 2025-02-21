@@ -102,4 +102,12 @@ public class VehicleCareServiceImpl implements VehicleCareService {
         Shop shop = shopRepository.findByUserUsername(username);
         return vehicleCareRepository.searchVehicleCaresByShop(searchTerm, shop.getId(), pageable);
     }
+
+    @Override
+    public List<VehicleCare> getByShopAndAvailable(Integer shopId) {
+        Shop shop = shopRepository.findById(shopId).orElseThrow(
+                () -> new EntityNotFoundException("Not found Shop!")
+        );
+        return vehicleCareRepository.findByAvailableIsTrueAndShop(shop);
+    }
 }

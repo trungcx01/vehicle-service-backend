@@ -77,7 +77,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));  //xác định các domain nào có thể truy cập đc tài nguyên của server qua Cors
         configuration.setAllowCredentials(true); // Cho phép hay không các yêu cầu có chứa thông tin xác thực.
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); ////Đăng ký cấu hình CORS với đường dẫn /**, nghĩa là áp dụng chung cho toàn bộ ứng dụng.
+        source.registerCorsConfiguration("/**", configuration); //Đăng ký cấu hình CORS với đường dẫn /**, nghĩa là áp dụng chung cho toàn bộ ứng dụng.
         return source;
     }
 }

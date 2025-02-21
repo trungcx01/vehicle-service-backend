@@ -6,6 +6,7 @@ import com.example.vehicleService.entity.*;
 import com.example.vehicleService.entity.enums.PaymentMethod;
 import com.example.vehicleService.entity.enums.ServiceType;
 import com.example.vehicleService.entity.enums.Status;
+import com.example.vehicleService.exception.BlogAPIException;
 import com.example.vehicleService.mapper.PaymentMapper;
 import com.example.vehicleService.repository.*;
 import com.example.vehicleService.service.PaymentService;
@@ -14,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,31 +65,40 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment1 != null && !payment1.getStatus().equals(Status.FINISHED)){
             paymentRepository.delete(payment1);
         }
-
         Payment payment = paymentMapper.toEntity(paymentDTO);
         long amount_ = 0;
         Shop shop = null;
+        Appointment appointment = null;
+        Proposal proposal = null;
         if (paymentDTO.getAppointmentId() == null){
             payment.setServiceType(ServiceType.EMERGENCY_REQUEST);
-            Proposal proposal = proposalRepository.findById(paymentDTO.getProposalId()).orElseThrow(
+            proposal = proposalRepository.findById(paymentDTO.getProposalId()).orElseThrow(
                     () -> new EntityNotFoundException("Not found proposal!")
             );
-            amount_ = proposal.getExpectedPrice();
+            amount_ = 100000;
             shop = proposal.getShop();
             payment.setBaseService(proposal);
         }else{
             payment.setServiceType(ServiceType.APPOINTMENT);
-            Appointment appointment = appointmentRepository.findById(paymentDTO.getAppointmentId()).orElseThrow(
+            appointment = appointmentRepository.findById(paymentDTO.getAppointmentId()).orElseThrow(
                     () -> new EntityNotFoundException("Not found appointment!")
             );
             payment.setBaseService(appointment);
             for (VehicleCare vehicleCare : appointment.getVehicleCares()){
-                amount_ += vehicleCare.getPrice();
+                amount_ += vehicleCare.getPrice() == null ? 0 : vehicleCare.getPrice();
                 shop = vehicleCare.getShop();
             }
         }
         payment.setAmount(amount_);
         if (paymentDTO.getPaymentMethod().equals(PaymentMethod.BANKING)){
+            if (appointment != null){
+                for (VehicleCare v : appointment.getVehicleCares()){
+                    if (v.getPrice() == null){
+                        throw new BlogAPIException(HttpStatus.BAD_REQUEST,
+                                "Không được phép thanh toán online với lịch hẹn chứa Hạng mục không có giá cụ thể");
+                    }
+                }
+            }
             payment.setStatus(Status.PENDING);
            VnpayResponseDTO res = vnpayService.createPayment(request, amount_,
                     "Thanh toan cho don hang: "
@@ -98,6 +109,10 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setTransactionReference(res.getVnp_TxnRef());
         } else {
             payment.setStatus(Status.FINISHED);
+            payment.setOrderInfo("Thanh toan cho don hang: "
+                    + (paymentDTO.getAppointmentId() != null
+                    ? "Appointment cho id " + paymentDTO.getAppointmentId()
+                    : "Proposal cho id " + paymentDTO.getProposalId()));
             if (shop != null){
                 shop.setRevenue(shop.getRevenue() != null ? shop.getRevenue() + amount_ : shop.getRevenue());
             }
